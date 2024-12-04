@@ -1,38 +1,48 @@
 package projectworkspace;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 public class StateScreen extends JPanel {
     private final App app;
+    private String selectedState1;
+    private String selectedState2;
+    private JPanel actionPanel;
 
     public StateScreen(App app) {
         super(new BorderLayout());
         this.app = app;
 
-        JLabel descLabel = createDescLabel();
-        JButton backButton = createBackButton();
+        selectedState1 = null;
+        selectedState2 = null;
 
-        this.add(backButton, BorderLayout.NORTH);
-        this.add(descLabel, BorderLayout.CENTER);
+        JLabel descLabel = ComponentFactory.createDescLabel("This is the StateScreen.");
+        JButton backBtn = ComponentFactory.createBackButton(app);
+        JButton resetBtn = createResetBtn();
+
+        actionPanel = new JPanel();
+        actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
+        actionPanel.add(Box.createVerticalStrut(2));
+        actionPanel.add(resetBtn);
+
+        JPanel contentPanel = ComponentFactory.createContentPanel();
+        contentPanel.add(descLabel, BorderLayout.NORTH);
+        contentPanel.add(actionPanel, BorderLayout.CENTER);
+
+        this.add(backBtn, BorderLayout.NORTH);
+        this.add(contentPanel, BorderLayout.CENTER);
     }
 
-    private JLabel createDescLabel() {
-        JLabel descLabel = new JLabel("This is the StateScreen.");
-        descLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        descLabel.setVerticalAlignment(SwingConstants.CENTER);
-        return descLabel;
-    }
-
-    private JButton createBackButton() {
-        JButton backButton = new JButton("Back to Main Menu");
-        backButton.addActionListener(app);
-        backButton.setHorizontalAlignment(SwingConstants.CENTER);
-        backButton.setVerticalAlignment(SwingConstants.CENTER);
-        return backButton;
+    private JButton createResetBtn() {
+        JButton resetBtn = new JButton("Reset all inputs");
+        resetBtn.addActionListener(e -> app.refreshStateScreen());
+        resetBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return resetBtn;
     }
 }

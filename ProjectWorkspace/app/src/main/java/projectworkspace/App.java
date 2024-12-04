@@ -75,7 +75,7 @@ public class App implements ActionListener {
         cardLayout.show(mainPanel, "RegionScreen");
     }
 
-    private void refreshStateScreen() {
+    public void refreshStateScreen() {
         ComponentFactory.reset();
         removeScreen("StateScreen");
         mainPanel.add(new StateScreen(this), "StateScreen");

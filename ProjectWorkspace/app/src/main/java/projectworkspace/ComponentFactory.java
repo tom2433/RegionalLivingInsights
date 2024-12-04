@@ -149,7 +149,8 @@ public class ComponentFactory {
         newDataset.addSeries(divider);
 
         JFreeChart newLineChart = ChartFactory.createXYLineChart(
-            "Median Home Values for " + newSeries1.getKey() + " vs. " + newSeries2.getKey() + " +" + numYears + " years",
+            "Median Home Values for " + newSeries1.getKey() + " vs. " + newSeries2.getKey() + " +" + numYears
+            + (numYears == 1 ? " year" : " years"),
             "Date (Year)",
             "Median Home Value (USD)",
             newDataset
