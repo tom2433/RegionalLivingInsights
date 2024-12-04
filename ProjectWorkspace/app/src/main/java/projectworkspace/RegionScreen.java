@@ -59,9 +59,7 @@ public class RegionScreen extends JPanel {
         actionPanel.add(descLabel4);
         actionPanel.add(Box.createVerticalStrut(2));
         actionPanel.add(resetBtn);
-        actionPanel.add(Box.createVerticalStrut(20));
-        actionPanel.add(Box.createVerticalStrut(10));
-        actionPanel.add(Box.createVerticalStrut(10));
+        actionPanel.add(Box.createVerticalStrut(40));
         actionPanel.add(selectState1Btn);
         actionPanel.add(Box.createVerticalStrut(10));
         actionPanel.add(selectState2Btn);
