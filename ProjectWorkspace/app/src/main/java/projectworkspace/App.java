@@ -27,7 +27,7 @@ public class App implements ActionListener {
     }
 
     private void windowManager() {
-        frame = new JFrame("App");
+        frame = new JFrame("Regional Living Insights");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         mainPanel.add(new MainMenu(this), "MainMenu");

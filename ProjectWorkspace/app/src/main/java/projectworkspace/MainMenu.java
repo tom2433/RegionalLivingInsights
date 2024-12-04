@@ -26,7 +26,7 @@ public class MainMenu extends JPanel {
     }
 
     private JLabel createDescLabel() {
-        JLabel descLabel = new JLabel("Welcome to my app! Choose an option below to begin: ");
+        JLabel descLabel = new JLabel("Welcome to Regional Living Insights! Choose an option below to begin: ");
         descLabel.setHorizontalAlignment(SwingConstants.CENTER);
         descLabel.setVerticalAlignment(SwingConstants.CENTER);
         return descLabel;
