@@ -241,7 +241,7 @@ public class RegionScreen extends JPanel {
 
     private void duplicateRegionWarning() {
         JOptionPane.showMessageDialog(
-            null,
+            app.getFrame(),
             "The selected regions must be unique in order to compare.",
             "Error",
             JOptionPane.WARNING_MESSAGE
