@@ -22,15 +22,15 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 public class ComponentFactory {
-    private static App app;
-    // these static variables will be reset to null after they are used
-    private static JButton calcPredictedBtn;
-    private static JDialog dialog;
-    private static JPanel actionPanel;
-    private static ChartPanel lineChartPanel;
-    private static int numYears;
+    private final App app;
+    private JButton calcPredictedBtn;
+    private JDialog dialog;
+    private JPanel actionPanel;
+    private ChartPanel lineChartPanel;
+    private int numYears;
 
-    public static void reset() {
+    public ComponentFactory(App app) {
+        this.app = app;
         calcPredictedBtn = null;
         dialog = null;
         actionPanel = null;
@@ -38,7 +38,7 @@ public class ComponentFactory {
         numYears = 0;
     }
 
-    public static JLabel createDescLabel(String text) {
+    public JLabel createDescLabel(String text) {
         JLabel descLabel = new JLabel(text);
         descLabel.setHorizontalAlignment(SwingConstants.CENTER);
         descLabel.setVerticalAlignment(SwingConstants.CENTER);
@@ -46,8 +46,7 @@ public class ComponentFactory {
         return descLabel;
     }
 
-    public static JButton createBackButton(App app) {
-        ComponentFactory.app = app;
+    public JButton createBackButton() {
         JButton backButton = new JButton("Back to Main Menu");
         backButton.addActionListener(app);
         backButton.setHorizontalAlignment(SwingConstants.CENTER);
@@ -55,15 +54,15 @@ public class ComponentFactory {
         return backButton;
     }
 
-    public static JPanel createContentPanel() {
+    public JPanel createContentPanel() {
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBorder(createEmptyBorder(20, 20, 20, 20));
         return contentPanel;
     }
 
-    public static void createCalcPredictedBtn(JPanel actionPanel, ChartPanel lineChartPanel) {
-        ComponentFactory.actionPanel = actionPanel;
-        ComponentFactory.lineChartPanel = lineChartPanel;
+    public void createCalcPredictedBtn(JPanel actionPanel, ChartPanel lineChartPanel) {
+        this.actionPanel = actionPanel;
+        this.lineChartPanel = lineChartPanel;
         calcPredictedBtn = new JButton("Calculate Predicted Data");
         calcPredictedBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         calcPredictedBtn.addActionListener(e -> createPredictedDataDialog());
@@ -74,7 +73,7 @@ public class ComponentFactory {
         actionPanel.repaint();
     }
 
-    private static void createPredictedDataDialog() {
+    private void createPredictedDataDialog() {
         dialog = new JDialog(app.getFrame(), "Select the number of years to predict");
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setSize(300, 300);
@@ -106,7 +105,7 @@ public class ComponentFactory {
         dialog.setVisible(true);
     }
 
-    private static void numYearsSelected(JButton numYearsBtn) {
+    private void numYearsSelected(JButton numYearsBtn) {
         String series1name;
         String series2name;
 
@@ -175,7 +174,7 @@ public class ComponentFactory {
         return maxY;
     }
 
-    private static void calcFutureCoords(XYSeries series) {
+    private void calcFutureCoords(XYSeries series) {
         // n = number of coordinates
         int n = series.getItemCount();
 

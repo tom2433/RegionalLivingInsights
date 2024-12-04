@@ -23,6 +23,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class RegionDataVisScreen extends JPanel {
     private final App app;
+    private ComponentFactory componentFactory;
     private String state1;
     private String state2;
     private String region1;
@@ -35,6 +36,7 @@ public class RegionDataVisScreen extends JPanel {
 
     public RegionDataVisScreen(App app) {
         this.app = app;
+        this.componentFactory = new ComponentFactory(app);
         this.state1 = null;
         this.state2 = null;
         this.region1 = null;
@@ -51,14 +53,14 @@ public class RegionDataVisScreen extends JPanel {
         this.region1Incorporated = app.getDataReader().getIncorporatedStatus(state1, region1);
         this.region2Incorporated = app.getDataReader().getIncorporatedStatus(state2, region2);
 
-        JLabel descLabel = ComponentFactory.createDescLabel(
+        JLabel descLabel = componentFactory.createDescLabel(
             "Comparing " + region1 + ", " + state1 + (region1Incorporated ? " (Incorporated) vs. " : " (Unincorporated) vs. ")
             + region2 + ", " + state2 + (region2Incorporated ? " (Incorporated):" : " (Unincorporated):")
         );
-        JLabel descLabel2 = ComponentFactory.createDescLabel("Begin by selecting the begin date to pull data from. The end date to stop pulling data is Dec2024.");
-        JLabel descLabel3 = ComponentFactory.createDescLabel("If you make any accidental selections, click the button below to reset all inputs.");
+        JLabel descLabel2 = componentFactory.createDescLabel("Begin by selecting the begin date to pull data from. The end date to stop pulling data is Dec2024.");
+        JLabel descLabel3 = componentFactory.createDescLabel("If you make any accidental selections, click the button below to reset all inputs.");
 
-        JPanel contentPanel = ComponentFactory.createContentPanel();
+        JPanel contentPanel = componentFactory.createContentPanel();
         contentPanel.add(descLabel, BorderLayout.NORTH);
 
         JButton resetBtn = createResetBtn();
@@ -77,7 +79,7 @@ public class RegionDataVisScreen extends JPanel {
 
         contentPanel.add(actionPanel, BorderLayout.CENTER);
 
-        JButton backBtn = ComponentFactory.createBackButton(app);
+        JButton backBtn = componentFactory.createBackButton();
         this.add(backBtn, BorderLayout.NORTH);
 
         JScrollPane scrollPane = new JScrollPane(contentPanel);
@@ -175,7 +177,7 @@ public class RegionDataVisScreen extends JPanel {
         actionPanel.revalidate();
         actionPanel.repaint();
 
-        ComponentFactory.createCalcPredictedBtn(actionPanel, lineChartPanel);
+        componentFactory.createCalcPredictedBtn(actionPanel, lineChartPanel);
     }
 
     private JFreeChart createZhviLineChart() {

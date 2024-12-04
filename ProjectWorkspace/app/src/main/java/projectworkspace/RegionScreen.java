@@ -16,6 +16,7 @@ import javax.swing.SwingConstants;
 
 public class RegionScreen extends JPanel {
     private final App app;
+    private ComponentFactory componentFactory;
     private JButton nextBtn;
     private JButton selectState1Btn;
     private JButton selectState2Btn;
@@ -30,18 +31,19 @@ public class RegionScreen extends JPanel {
     public RegionScreen(App app) {
         super(new BorderLayout());
         this.app = app;
+        this.componentFactory = new ComponentFactory(app);
 
         selectedState1 = null;
         selectedState2 = null;
         selectedRegion1 = null;
         selectedRegion2 = null;
 
-        JLabel descLabel = ComponentFactory.createDescLabel("To compare two regions, begin by selecting the two states which the regions belong to.");
-        JLabel descLabel2 = ComponentFactory.createDescLabel("Once you have selected your 2 regions, click the \"Compare Regions -->\" button at the bottom.");
-        JLabel descLabel3 = ComponentFactory.createDescLabel("Please note that you cannot select two of the same regions.");
-        JLabel descLabel4 = ComponentFactory.createDescLabel("If you make any accidental selections, click the button below to reset all inputs.");
+        JLabel descLabel = componentFactory.createDescLabel("To compare two regions, begin by selecting the two states which the regions belong to.");
+        JLabel descLabel2 = componentFactory.createDescLabel("Once you have selected your 2 regions, click the \"Compare Regions -->\" button at the bottom.");
+        JLabel descLabel3 = componentFactory.createDescLabel("Please note that you cannot select two of the same regions.");
+        JLabel descLabel4 = componentFactory.createDescLabel("If you make any accidental selections, click the button below to reset all inputs.");
         JButton resetBtn = createResetBtn();
-        JButton backButton = ComponentFactory.createBackButton(app);
+        JButton backButton = componentFactory.createBackButton();
         nextBtn = createNextBtn();
 
         selectState1Btn = createStateButton(1);
@@ -64,7 +66,7 @@ public class RegionScreen extends JPanel {
         actionPanel.add(Box.createVerticalStrut(10));
         actionPanel.add(selectState2Btn);
 
-        JPanel contentPanel = ComponentFactory.createContentPanel();
+        JPanel contentPanel = componentFactory.createContentPanel();
         contentPanel.add(descLabel, BorderLayout.NORTH);
         contentPanel.add(actionPanel, BorderLayout.CENTER);
 

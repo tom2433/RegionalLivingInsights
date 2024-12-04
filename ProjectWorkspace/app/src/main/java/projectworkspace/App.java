@@ -69,35 +69,30 @@ public class App implements ActionListener {
     }
 
     public void refreshRegionScreen() {
-        ComponentFactory.reset();
         removeScreen("RegionScreen");
         mainPanel.add(new RegionScreen(this), "RegionScreen");
         cardLayout.show(mainPanel, "RegionScreen");
     }
 
     public void refreshStateScreen() {
-        ComponentFactory.reset();
         removeScreen("StateScreen");
         mainPanel.add(new StateScreen(this), "StateScreen");
         cardLayout.show(mainPanel, "StateScreen");
     }
 
     private void refreshCustomDataScreen() {
-        ComponentFactory.reset();
         removeScreen("CustomDataScreen");
         mainPanel.add(new CustomDataScreen(this), "CustomDataScreen");
         cardLayout.show(mainPanel, "CustomDataScreen");
     }
 
     private void refreshMainMenu() {
-        ComponentFactory.reset();
         removeScreen("MainMenu");
         mainPanel.add(new MainMenu(this), "MainMenu");
         cardLayout.show(mainPanel, "MainMenu");
     }
 
     public void refreshRegionDataVisScreen(String state1, String state2, String region1, String region2) {
-        ComponentFactory.reset();
         removeScreen("RegionDataVisScreen");
         mainPanel.add(new RegionDataVisScreen(this, state1, state2, region1, region2), "RegionDataVisScreen");
         cardLayout.show(mainPanel, "RegionDataVisScreen");

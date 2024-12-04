@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 public class StateScreen extends JPanel {
     private final App app;
+    private ComponentFactory componentFactory;
     private String selectedState1;
     private String selectedState2;
     private JPanel actionPanel;
@@ -18,12 +19,13 @@ public class StateScreen extends JPanel {
     public StateScreen(App app) {
         super(new BorderLayout());
         this.app = app;
+        this.componentFactory = new ComponentFactory(app);
 
         selectedState1 = null;
         selectedState2 = null;
 
-        JLabel descLabel = ComponentFactory.createDescLabel("This is the StateScreen.");
-        JButton backBtn = ComponentFactory.createBackButton(app);
+        JLabel descLabel = componentFactory.createDescLabel("This is the StateScreen.");
+        JButton backBtn = componentFactory.createBackButton();
         JButton resetBtn = createResetBtn();
 
         actionPanel = new JPanel();
@@ -31,7 +33,7 @@ public class StateScreen extends JPanel {
         actionPanel.add(Box.createVerticalStrut(2));
         actionPanel.add(resetBtn);
 
-        JPanel contentPanel = ComponentFactory.createContentPanel();
+        JPanel contentPanel = componentFactory.createContentPanel();
         contentPanel.add(descLabel, BorderLayout.NORTH);
         contentPanel.add(actionPanel, BorderLayout.CENTER);
 
