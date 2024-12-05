@@ -163,7 +163,12 @@ public class CustomDataScreen extends JPanel {
                     } else {
                         stateRegions2.add(region + ", " + state);
                     }
-                    addToLabelPanel(datasetNum, region + ", " + state);
+
+                    if (app.getDataReader().getIncorporatedStatus(state, region) == true) {
+                        addToLabelPanel(datasetNum, region + ", " + state + " (Incorporated)");
+                    } else {
+                        addToLabelPanel(datasetNum, region + ", " + state + " (Unincorporated)");
+                    }
                 } else {
                     duplicateStateRegionWarning();
                 }
