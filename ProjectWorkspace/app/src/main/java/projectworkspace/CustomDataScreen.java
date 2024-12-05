@@ -19,34 +19,37 @@ public class CustomDataScreen extends JPanel {
     private final App app;
     private ComponentFactory componentFactory;
     private JPanel actionPanel;
-    private JPanel labelPanel1;
-    private JPanel labelPanel2;
-    private JButton addStateBtn1;
-    private JButton addRegionBtn1;
-    private JButton addStateBtn2;
-    private JButton addRegionBtn2;
+    private ArrayList<JPanel> labelPanels;
     private JButton nextBtn;
-    private ArrayList<String> stateRegions1;
-    private ArrayList<String> stateRegions2;
+    // TODO: Implement functionality for multiple datasets
+    private ArrayList<ArrayList<String>> stateRegions;
 
     public CustomDataScreen(App app) {
         super(new BorderLayout());
         this.app = app;
         this.componentFactory = new ComponentFactory(app);
-        stateRegions1 = new ArrayList<>();
-        stateRegions2 = new ArrayList<>();
+        // stateRegions1 = new ArrayList<>();
+        // stateRegions2 = new ArrayList<>();
+        stateRegions = new ArrayList<>();
+        labelPanels = new ArrayList<>();
+        ArrayList<String> stateRegions1 = new ArrayList<>();
+        ArrayList<String> stateRegions2 = new ArrayList<>();
+        stateRegions.add(stateRegions1);
+        stateRegions.add(stateRegions2);
 
         JLabel descLabel = componentFactory.createDescLabel("This is the CustomDataScreen.");
         JButton backBtn = componentFactory.createBackButton();
         JButton resetBtn = createResetBtn();
-        labelPanel1 = createLabelPanel();
-        labelPanel2 = createLabelPanel();
+        JPanel labelPanel1 = createLabelPanel();
+        JPanel labelPanel2 = createLabelPanel();
+        labelPanels.add(labelPanel1);
+        labelPanels.add(labelPanel2);
         addToLabelPanel(1, "Selected Regions/States for Dataset 1:");
         addToLabelPanel(2, "Selected Regions/States for Dataset 2:");
-        addStateBtn1 = createAddStateBtn(1);
-        addStateBtn2 = createAddStateBtn(2);
-        addRegionBtn1 = createAddRegionBtn(1);
-        addRegionBtn2 = createAddRegionBtn(2);
+        JButton addStateBtn1 = createAddStateBtn(1);
+        JButton addStateBtn2 = createAddStateBtn(2);
+        JButton addRegionBtn1 = createAddRegionBtn(1);
+        JButton addRegionBtn2 = createAddRegionBtn(2);
         createNextBtn();
 
         actionPanel = new JPanel();
@@ -157,11 +160,24 @@ public class CustomDataScreen extends JPanel {
             JButton regionBtn = new JButton(region);
             regionBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
             regionBtn.addActionListener(e -> {
-                if (!stateRegions1.contains(region + ", " + state) && !stateRegions2.contains(region + ", " + state)) {
-                    if (datasetNum == 1) {
-                        stateRegions1.add(region + ", " + state);
-                    } else {
-                        stateRegions2.add(region + ", " + state);
+                boolean stateRegionInDataset = false;
+                for (ArrayList<String> stateRegionList : stateRegions) {
+                    if (stateRegionList.contains(region + ", " + state)) {
+                        stateRegionInDataset = true;
+                        break;
+                    }
+                }
+
+                if (stateRegionInDataset) {
+                    duplicateStateRegionWarning();
+                } else {
+                    try {
+                        ArrayList<String> stateRegionList = stateRegions.get(datasetNum - 1);
+                        stateRegionList.add(region + ", " + state);
+                    } catch (IndexOutOfBoundsException ex) {
+                        ArrayList<String> stateRegionList = new ArrayList<>();
+                        stateRegionList.add(region + ", " + state);
+                        stateRegions.add(datasetNum - 1, stateRegionList);
                     }
 
                     if (app.getDataReader().getIncorporatedStatus(state, region) == true) {
@@ -169,13 +185,19 @@ public class CustomDataScreen extends JPanel {
                     } else {
                         addToLabelPanel(datasetNum, region + ", " + state + " (Unincorporated)");
                     }
-                } else {
-                    duplicateStateRegionWarning();
                 }
 
                 dialog.dispose();
 
-                if (!stateRegions1.isEmpty() && !stateRegions2.isEmpty()) {
+                boolean atLeastOneListEmpty = false;
+                for (ArrayList<String> stateRegionList : stateRegions) {
+                    if (stateRegionList.isEmpty()) {
+                        atLeastOneListEmpty = true;
+                        break;
+                    }
+                }
+
+                if (!atLeastOneListEmpty) {
                     nextBtn.setEnabled(true);
                 }
             });
@@ -215,20 +237,40 @@ public class CustomDataScreen extends JPanel {
             JButton stateBtn = new JButton(state);
             stateBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
             stateBtn.addActionListener(e -> {
-                if (!stateRegions1.contains(state) && !stateRegions2.contains(state)) {
-                    if (datasetNum == 1) {
-                        stateRegions1.add(state);
-                    } else {
-                        stateRegions2.add(state);
+                boolean stateRegionInDataset = false;
+                for (ArrayList<String> stateRegionList : stateRegions) {
+                    if (stateRegionList.contains(state)) {
+                        stateRegionInDataset = true;
+                        break;
                     }
-                    addToLabelPanel(datasetNum, state);
-                } else {
+                }
+
+                if (stateRegionInDataset) {
                     duplicateStateRegionWarning();
+                } else {
+                    try {
+                        ArrayList<String> stateRegionList = stateRegions.get(datasetNum - 1);
+                        stateRegionList.add(state);
+                    } catch (IndexOutOfBoundsException ex) {
+                        ArrayList<String> stateRegionList = new ArrayList<>();
+                        stateRegionList.add(state);
+                        stateRegions.add(datasetNum - 1, stateRegionList);
+                    }
+
+                    addToLabelPanel(datasetNum, state);
                 }
 
                 dialog.dispose();
 
-                if (!stateRegions1.isEmpty() && !stateRegions2.isEmpty()) {
+                boolean atLeastOneListEmpty = false;
+                for (ArrayList<String> stateRegionList : stateRegions) {
+                    if (stateRegionList.isEmpty()) {
+                        atLeastOneListEmpty = true;
+                        break;
+                    }
+                }
+
+                if (!atLeastOneListEmpty) {
                     nextBtn.setEnabled(true);
                 }
             });
@@ -254,15 +296,11 @@ public class CustomDataScreen extends JPanel {
     private void addToLabelPanel(int panelNum, String text) {
         JLabel label = new JLabel(text);
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        if (panelNum == 1) {
-            labelPanel1.add(label);
-            labelPanel1.revalidate();
-            labelPanel1.repaint();
-        } else {
-            labelPanel2.add(label);
-            labelPanel2.revalidate();
-            labelPanel2.repaint();
-        }
+
+        JPanel labelPanel = labelPanels.get(panelNum - 1);
+        labelPanel.add(label);
+        labelPanel.revalidate();
+        labelPanel.repaint();
     }
 
     private JPanel createLabelPanel() {
@@ -290,5 +328,14 @@ public class CustomDataScreen extends JPanel {
     private void nextBtnClicked() {
         // TODO: replace with app.refreshCustomDataVisScreen(stateRegions1, stateRegions2);
         app.refreshCustomDataScreen();
+
+        int i = 1;
+        for (ArrayList<String> stateRegionList : stateRegions) {
+            System.out.println(i + ":");
+            for (String stateRegion : stateRegionList) {
+                System.out.println(stateRegion);
+            }
+            i++;
+        }
     }
 }
