@@ -32,7 +32,7 @@ public class StateDataVisScreen extends JPanel {
 
     public StateDataVisScreen(App app) {
         this.app = app;
-        this.componentFactory = new ComponentFactory(app);
+        this.componentFactory = null;
         this.state1 = null;
         this.state2 = null;
     }

@@ -4,6 +4,7 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -36,6 +37,7 @@ public class App implements ActionListener {
         mainPanel.add(new StateScreen(this), "StateScreen");
         mainPanel.add(new StateDataVisScreen(this), "StateDataVisScreen");
         mainPanel.add(new CustomDataScreen(this), "CustomDataScreen");
+        mainPanel.add(new CustomDataVisScreen(this), "CustomDataVisScreen");
 
         frame.add(mainPanel);
         frame.setSize(750, 750);
@@ -103,6 +105,12 @@ public class App implements ActionListener {
         removeScreen("StateDataVisScreen");
         mainPanel.add(new StateDataVisScreen(this, state1, state2), "StateDataVisScreen");
         cardLayout.show(mainPanel, "StateDataVisScreen");
+    }
+
+    public void refreshCustomDataVisScreen(ArrayList<ArrayList<String>> datasets) {
+        removeScreen("CustomDataVisScreen");
+        mainPanel.add(new CustomDataVisScreen(this, datasets), "CustomDataVisScreen");
+        cardLayout.show(mainPanel, "CustomDataVisScreen");
     }
 
     public JFrame getFrame() {

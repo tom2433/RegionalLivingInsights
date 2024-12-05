@@ -206,21 +206,23 @@ public class DataReader {
 
     @SuppressWarnings("CallToPrintStackTrace")
     public int getAvgStateDensity() {
-        // retrieve a list of all states
-        String[] states = getStates();
-        int avgStateDensity;
+        int avgStateDensity = 0;
 
-        ArrayList<Integer> stateDensityAvgs = new ArrayList<>();
+        try {
+            establishConnection();
 
-        for (String state : states) {
-            stateDensityAvgs.add(getStateDensity(state));
+            resultSet = statement.executeQuery("""
+                SELECT AVG(AvgDensity)
+                FROM statedensityview;
+            """);
+
+            resultSet.next();
+            avgStateDensity = (int) resultSet.getDouble("AVG(AvgDensity)");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
         }
-
-        int sum = 0;
-        for (int density : stateDensityAvgs) {
-            sum += density;
-        }
-        avgStateDensity = sum / stateDensityAvgs.size();
 
         return avgStateDensity;
     }
@@ -232,35 +234,13 @@ public class DataReader {
         try {
             establishConnection();
 
-            ArrayList<Integer> regionIDs = new ArrayList<>();
-
             resultSet = statement.executeQuery("""
-                SELECT RegionID
-                FROM regions.regions
+                SELECT AvgDensity
+                FROM statedensityview
                 WHERE StateName = '""" + state + "';");
-
-            while (resultSet.next()) {
-                regionIDs.add(resultSet.getInt("RegionID"));
-            }
-
-            ArrayList<Integer> regionDensities = new ArrayList<>();
-
-            for (int regionID : regionIDs) {
-                resultSet = statement.executeQuery("""
-                    SELECT PopulationDensity
-                    FROM regions.region_populations
-                    WHERE RegionID = """ + regionID + ";"
-                );
-
-                resultSet.next();
-                regionDensities.add(resultSet.getInt("PopulationDensity"));
-            }
-
-            int sum = 0;
-            for (int density : regionDensities) {
-                sum += density;
-            }
-            avgRegionDensity = sum / regionDensities.size();
+            resultSet.next();
+            double avgDensity = resultSet.getDouble("AvgDensity");
+            avgRegionDensity = (int) avgDensity;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
