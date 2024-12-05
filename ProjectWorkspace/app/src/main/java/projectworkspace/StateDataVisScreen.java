@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -12,6 +13,13 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 public class StateDataVisScreen extends JPanel {
     private final App app;
@@ -126,7 +134,7 @@ public class StateDataVisScreen extends JPanel {
 
         JButton viewResultsBtn = new JButton("View Results");
         viewResultsBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        // viewResultsBtn.addActionListener(e -> viewResults());
+        viewResultsBtn.addActionListener(e -> viewResults());
 
         actionPanel.add(Box.createVerticalStrut(10));
         actionPanel.add(viewResultsBtn);
@@ -137,5 +145,81 @@ public class StateDataVisScreen extends JPanel {
         resetBtn.addActionListener(e -> app.refreshStateDataVisScreen(state1, state2));
         resetBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         return resetBtn;
+    }
+
+    private void viewResults() {
+        JFreeChart populationBarChart = createPopulationBarChart();
+        ChartPanel barChartPanel = new ChartPanel(populationBarChart);
+        barChartPanel.setPreferredSize(new Dimension(300, 400));
+        actionPanel.add(Box.createVerticalStrut(10));
+        actionPanel.add(barChartPanel);
+        actionPanel.revalidate();
+        actionPanel.repaint();
+
+        JFreeChart zhviLineChart = createZhviLineChart();
+        ChartPanel lineChartPanel = new ChartPanel(zhviLineChart);
+        lineChartPanel.setPreferredSize(new Dimension(300, 300));
+        actionPanel.add(Box.createVerticalStrut(10));
+        actionPanel.add(lineChartPanel);
+        actionPanel.revalidate();
+        actionPanel.repaint();
+
+        componentFactory.createCalcPredictedBtn(actionPanel, lineChartPanel);
+    }
+
+    private JFreeChart createZhviLineChart() {
+        Map<Double, Double> state1zhviData = app.getDataReader().getZhviDataFromState(state1, selectedBeginMonth);
+        Map<Double, Double> state2zhviData = app.getDataReader().getZhviDataFromState(state2, selectedBeginMonth);
+        XYSeries state1Series = new XYSeries(state1);
+        XYSeries state2Series = new XYSeries(state2);
+        XYSeriesCollection dataset = new XYSeriesCollection();
+
+        for (Map.Entry<Double, Double> entry : state1zhviData.entrySet()) {
+            state1Series.add(entry.getKey(), entry.getValue());
+        }
+
+        for (Map.Entry<Double, Double> entry : state2zhviData.entrySet()) {
+            state2Series.add(entry.getKey(), entry.getValue());
+        }
+
+        dataset.addSeries(state1Series);
+        dataset.addSeries(state2Series);
+
+        JFreeChart lineChart = ChartFactory.createXYLineChart(
+            "Median Home Values For " + state1 + " vs. " + state2,
+            "Date (Year)",
+            "Median Home Value (USD)",
+            dataset
+        );
+
+        return lineChart;
+    }
+
+    private JFreeChart createPopulationBarChart() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset.addValue(
+            app.getDataReader().getAvgStateDensity(),
+            "Average US State",
+            "Average Density"
+        );
+        dataset.addValue(
+            app.getDataReader().getStateDensity(state1),
+            "Selected US State",
+            state1
+        );
+        dataset.addValue(
+            app.getDataReader().getStateDensity(state2),
+            "Selected US State",
+            state2
+        );
+
+        JFreeChart barChart = ChartFactory.createBarChart(
+            "Population Density",
+            "State",
+            "Population Density Per Square Kilometer",
+            dataset
+        );
+
+        return barChart;
     }
 }

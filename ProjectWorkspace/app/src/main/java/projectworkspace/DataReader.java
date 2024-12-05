@@ -15,6 +15,68 @@ public class DataReader {
     private ResultSet resultSet = null;
 
     @SuppressWarnings("CallToPrintStackTrace")
+    public Map<Double, Double> getZhviDataFromState(String state, String startMonth) {
+        ArrayList<Integer> regionIDs = new ArrayList<>();
+        String currentMonth = startMonth;
+        double lastNonNullValue = 0.0;
+        Map<Double, Double> resultData = new HashMap<>();
+
+        try {
+            establishConnection();
+
+            // get all region ids from state
+            resultSet = statement.executeQuery("""
+                SELECT RegionID
+                FROM regions.regions
+                WHERE StateName = '""" + state + "';"
+            );
+
+            while (resultSet.next()) {
+                regionIDs.add(resultSet.getInt("RegionID"));
+            }
+
+            // get all zhvi data from all region ids
+            String zhviQuery = "SELECT AVG(";
+
+            for (int i = 0; i < getNumOfRemainingMonths(startMonth); i++) {
+                zhviQuery += currentMonth + "), AVG(";
+                currentMonth = getNextMonth(currentMonth);
+            }
+
+            zhviQuery = zhviQuery.substring(0, zhviQuery.length() - ", AVG(".length());
+            zhviQuery += " FROM regions.region_zhvi_values WHERE RegionID = ";
+
+            zhviQuery += regionIDs.get(0);
+            for (int i = 1; i < regionIDs.size(); i++) {
+                zhviQuery += " || RegionID = " + regionIDs.get(i);
+            }
+            zhviQuery += ";";
+
+            resultSet = statement.executeQuery(zhviQuery);
+
+            currentMonth = startMonth;
+            resultSet.next();
+            for (int i = 0; i < getNumOfRemainingMonths(startMonth); i++) {
+                double zhviValue = resultSet.getDouble("AVG(" + currentMonth + ")");
+                if (zhviValue == 0.0) {
+                    zhviValue = lastNonNullValue;
+                } else {
+                    lastNonNullValue = zhviValue;
+                }
+
+                resultData.put(getDoubleFromMonth(currentMonth), zhviValue);
+                currentMonth = getNextMonth(currentMonth);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return resultData;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
     public Map<Double, Double> getZhviDataFromRegion(String region, String state, String startMonth) {
         int regionID;
         Map<Double, Double> resultData = new HashMap<>();
@@ -140,6 +202,72 @@ public class DataReader {
         }
 
         return 0.0;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public int getAvgStateDensity() {
+        // retrieve a list of all states
+        String[] states = getStates();
+        int avgStateDensity;
+
+        ArrayList<Integer> stateDensityAvgs = new ArrayList<>();
+
+        for (String state : states) {
+            stateDensityAvgs.add(getStateDensity(state));
+        }
+
+        int sum = 0;
+        for (int density : stateDensityAvgs) {
+            sum += density;
+        }
+        avgStateDensity = sum / stateDensityAvgs.size();
+
+        return avgStateDensity;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public int getStateDensity(String state) {
+        int avgRegionDensity = 0;
+
+        try {
+            establishConnection();
+
+            ArrayList<Integer> regionIDs = new ArrayList<>();
+
+            resultSet = statement.executeQuery("""
+                SELECT RegionID
+                FROM regions.regions
+                WHERE StateName = '""" + state + "';");
+
+            while (resultSet.next()) {
+                regionIDs.add(resultSet.getInt("RegionID"));
+            }
+
+            ArrayList<Integer> regionDensities = new ArrayList<>();
+
+            for (int regionID : regionIDs) {
+                resultSet = statement.executeQuery("""
+                    SELECT PopulationDensity
+                    FROM regions.region_populations
+                    WHERE RegionID = """ + regionID + ";"
+                );
+
+                resultSet.next();
+                regionDensities.add(resultSet.getInt("PopulationDensity"));
+            }
+
+            int sum = 0;
+            for (int density : regionDensities) {
+                sum += density;
+            }
+            avgRegionDensity = sum / regionDensities.size();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return avgRegionDensity;
     }
 
     @SuppressWarnings("CallToPrintStackTrace")
