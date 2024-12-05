@@ -58,7 +58,7 @@ public class RegionDataVisScreen extends JPanel {
             "Comparing " + region1 + ", " + state1 + (region1Incorporated ? " (Incorporated) vs. " : " (Unincorporated) vs. ")
             + region2 + ", " + state2 + (region2Incorporated ? " (Incorporated):" : " (Unincorporated):")
         );
-        JLabel descLabel2 = componentFactory.createDescLabel("Begin by selecting the begin date to pull data from. The end date to stop pulling data is Dec2024.");
+        JLabel descLabel2 = componentFactory.createDescLabel("Begin by selecting the begin date to pull data from. The end date to stop pulling data is Oct2024.");
         JLabel descLabel3 = componentFactory.createDescLabel("If you make any accidental selections, click the button below to reset all inputs.");
 
         JPanel contentPanel = componentFactory.createContentPanel();

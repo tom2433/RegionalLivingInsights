@@ -81,7 +81,7 @@ public class App implements ActionListener {
         cardLayout.show(mainPanel, "StateScreen");
     }
 
-    private void refreshCustomDataScreen() {
+    public void refreshCustomDataScreen() {
         removeScreen("CustomDataScreen");
         mainPanel.add(new CustomDataScreen(this), "CustomDataScreen");
         cardLayout.show(mainPanel, "CustomDataScreen");
