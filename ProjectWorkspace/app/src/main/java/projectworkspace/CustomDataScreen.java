@@ -333,7 +333,7 @@ public class CustomDataScreen extends JPanel {
     }
 
     private void nextBtnClicked() {
-        // TODO: replace with app.refreshCustomDataVisScreen(stateRegions1, stateRegions2);
+        // TODO: replace with app.refreshCustomDataVisScreen(datasets);
         app.refreshCustomDataScreen();
 
         int i = 1;

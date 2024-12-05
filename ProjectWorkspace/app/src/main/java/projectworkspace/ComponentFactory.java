@@ -106,9 +106,6 @@ public class ComponentFactory {
     }
 
     private void numYearsSelected(JButton numYearsBtn) {
-        String series1name;
-        String series2name;
-
         numYears = Integer.parseInt(numYearsBtn.getText().substring(0, 1));
 
         // check if numYears is 10 (else 10 would be recognized as 1 from substring)
@@ -122,38 +119,40 @@ public class ComponentFactory {
         JFreeChart lineChart = lineChartPanel.getChart();
         XYPlot plot = (XYPlot) lineChart.getPlot();
         XYSeriesCollection dataset = (XYSeriesCollection) plot.getDataset();
-        XYSeries series1 = dataset.getSeries(0);
-        XYSeries series2 = dataset.getSeries(1);
-        series1name = (String) series1.getKey();
-        series2name = (String) series2.getKey();
-
-        XYSeries newSeries1 = new XYSeries(series1name);
-        XYSeries newSeries2 = new XYSeries(series2name);
-        for (int i = 0; i < series1.getItemCount(); i++) {
-            newSeries1.add(series1.getX(i), series1.getY(i));
-            newSeries2.add(series2.getX(i), series2.getY(i));
-        }
-
-        calcFutureCoords(newSeries1);
-        calcFutureCoords(newSeries2);
-        XYSeries divider = new XYSeries("Divider");
-        double maxValSeries1 = getMaxValFromSeries(newSeries1);
-        double maxValSeries2 = getMaxValFromSeries(newSeries2);
-        divider.add(2025, 0);
-        divider.add(2025, (maxValSeries1 > maxValSeries2 ? maxValSeries1 : maxValSeries2));
 
         XYSeriesCollection newDataset = new XYSeriesCollection();
-        newDataset.addSeries(newSeries1);
-        newDataset.addSeries(newSeries2);
+
+        double globalMaxValue = 0;
+
+        for (int seriesIndex = 0; seriesIndex < dataset.getSeriesCount(); seriesIndex++) {
+            XYSeries originalSeries = dataset.getSeries(seriesIndex);
+            XYSeries newSeries = new XYSeries(originalSeries.getKey());
+
+            for (int i = 0; i < originalSeries.getItemCount(); i++) {
+                newSeries.add(originalSeries.getX(i), originalSeries.getY(i));
+            }
+
+            calcFutureCoords(newSeries);
+            newDataset.addSeries(newSeries);
+
+            double maxValSeries = getMaxValFromSeries(newSeries);
+            if (maxValSeries > globalMaxValue) {
+                globalMaxValue = maxValSeries;
+            }
+        }
+
+        XYSeries divider = new XYSeries("Divider");
+        divider.add(2025, 0);
+        divider.add(2025, globalMaxValue);
         newDataset.addSeries(divider);
 
         JFreeChart newLineChart = ChartFactory.createXYLineChart(
-            "Median Home Values for " + newSeries1.getKey() + " vs. " + newSeries2.getKey() + " +" + numYears
-            + (numYears == 1 ? " year" : " years"),
+            "Median Home Values + " + numYears + (numYears == 1 ? " year" : " years"),
             "Date (Year)",
             "Median Home Value (USD)",
             newDataset
         );
+
         ChartPanel newLineChartPanel = new ChartPanel(newLineChart);
         newLineChartPanel.setPreferredSize(new Dimension(300, 300));
         actionPanel.add(Box.createVerticalStrut(10));
