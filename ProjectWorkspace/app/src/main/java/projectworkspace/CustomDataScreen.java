@@ -21,53 +21,27 @@ public class CustomDataScreen extends JPanel {
     private JPanel actionPanel;
     private ArrayList<JPanel> labelPanels;
     private JButton nextBtn;
-    // TODO: Implement functionality for multiple datasets
-    private ArrayList<ArrayList<String>> stateRegions;
+    private ArrayList<ArrayList<String>> datasets;
 
     public CustomDataScreen(App app) {
         super(new BorderLayout());
         this.app = app;
         this.componentFactory = new ComponentFactory(app);
-        // stateRegions1 = new ArrayList<>();
-        // stateRegions2 = new ArrayList<>();
-        stateRegions = new ArrayList<>();
+        datasets = new ArrayList<>();
         labelPanels = new ArrayList<>();
-        ArrayList<String> stateRegions1 = new ArrayList<>();
-        ArrayList<String> stateRegions2 = new ArrayList<>();
-        stateRegions.add(stateRegions1);
-        stateRegions.add(stateRegions2);
 
         JLabel descLabel = componentFactory.createDescLabel("This is the CustomDataScreen.");
         JButton backBtn = componentFactory.createBackButton();
         JButton resetBtn = createResetBtn();
-        JPanel labelPanel1 = createLabelPanel();
-        JPanel labelPanel2 = createLabelPanel();
-        labelPanels.add(labelPanel1);
-        labelPanels.add(labelPanel2);
-        addToLabelPanel(1, "Selected Regions/States for Dataset 1:");
-        addToLabelPanel(2, "Selected Regions/States for Dataset 2:");
-        JButton addStateBtn1 = createAddStateBtn(1);
-        JButton addStateBtn2 = createAddStateBtn(2);
-        JButton addRegionBtn1 = createAddRegionBtn(1);
-        JButton addRegionBtn2 = createAddRegionBtn(2);
+        JButton addDatasetBtn = createAddDatasetBtn();
         createNextBtn();
 
         actionPanel = new JPanel();
         actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
         actionPanel.add(Box.createVerticalStrut(2));
         actionPanel.add(resetBtn);
-        actionPanel.add(Box.createVerticalStrut(20));
-        actionPanel.add(labelPanel1);
-        actionPanel.add(Box.createVerticalStrut(20));
-        actionPanel.add(addStateBtn1);
-        actionPanel.add(Box.createVerticalStrut(10));
-        actionPanel.add(addRegionBtn1);
-        actionPanel.add(Box.createVerticalStrut(20));
-        actionPanel.add(labelPanel2);
-        actionPanel.add(Box.createVerticalStrut(20));
-        actionPanel.add(addStateBtn2);
-        actionPanel.add(Box.createVerticalStrut(10));
-        actionPanel.add(addRegionBtn2);
+        actionPanel.add(Box.createVerticalStrut(2));
+        actionPanel.add(addDatasetBtn);
 
         JPanel contentPanel = componentFactory.createContentPanel();
         contentPanel.add(descLabel, BorderLayout.NORTH);
@@ -80,6 +54,39 @@ public class CustomDataScreen extends JPanel {
         this.add(backBtn, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
         this.add(nextBtn, BorderLayout.SOUTH);
+
+        addDataset(1);
+        addDataset(2);
+    }
+
+    private void addDataset(int datasetNum) {
+        ArrayList<String> dataset = new ArrayList<>();
+        datasets.add(dataset);
+
+        JPanel labelPanel = createLabelPanel();
+        labelPanels.add(labelPanel);
+        addToLabelPanel(datasetNum, "Selected Regions/States for Dataset " + datasetNum + ":");
+        JButton addStateBtn = createAddStateBtn(datasetNum);
+        JButton addRegionBtn = createAddRegionBtn(datasetNum);
+
+        actionPanel.add(Box.createVerticalStrut(20));
+        actionPanel.add(labelPanel);
+        actionPanel.add(Box.createVerticalStrut(20));
+        actionPanel.add(addStateBtn);
+        actionPanel.add(Box.createVerticalStrut(10));
+        actionPanel.add(addRegionBtn);
+
+        nextBtn.setEnabled(false);
+
+        actionPanel.revalidate();
+        actionPanel.repaint();
+    }
+
+    private JButton createAddDatasetBtn() {
+        JButton addDatasetBtn = new JButton("Add another dataset");
+        addDatasetBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        addDatasetBtn.addActionListener(e -> addDataset(datasets.size() + 1));
+        return addDatasetBtn;
     }
 
     private void createNextBtn() {
@@ -161,7 +168,7 @@ public class CustomDataScreen extends JPanel {
             regionBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
             regionBtn.addActionListener(e -> {
                 boolean stateRegionInDataset = false;
-                for (ArrayList<String> stateRegionList : stateRegions) {
+                for (ArrayList<String> stateRegionList : datasets) {
                     if (stateRegionList.contains(region + ", " + state)) {
                         stateRegionInDataset = true;
                         break;
@@ -172,12 +179,12 @@ public class CustomDataScreen extends JPanel {
                     duplicateStateRegionWarning();
                 } else {
                     try {
-                        ArrayList<String> stateRegionList = stateRegions.get(datasetNum - 1);
+                        ArrayList<String> stateRegionList = datasets.get(datasetNum - 1);
                         stateRegionList.add(region + ", " + state);
                     } catch (IndexOutOfBoundsException ex) {
                         ArrayList<String> stateRegionList = new ArrayList<>();
                         stateRegionList.add(region + ", " + state);
-                        stateRegions.add(datasetNum - 1, stateRegionList);
+                        datasets.add(datasetNum - 1, stateRegionList);
                     }
 
                     if (app.getDataReader().getIncorporatedStatus(state, region) == true) {
@@ -190,7 +197,7 @@ public class CustomDataScreen extends JPanel {
                 dialog.dispose();
 
                 boolean atLeastOneListEmpty = false;
-                for (ArrayList<String> stateRegionList : stateRegions) {
+                for (ArrayList<String> stateRegionList : datasets) {
                     if (stateRegionList.isEmpty()) {
                         atLeastOneListEmpty = true;
                         break;
@@ -238,7 +245,7 @@ public class CustomDataScreen extends JPanel {
             stateBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
             stateBtn.addActionListener(e -> {
                 boolean stateRegionInDataset = false;
-                for (ArrayList<String> stateRegionList : stateRegions) {
+                for (ArrayList<String> stateRegionList : datasets) {
                     if (stateRegionList.contains(state)) {
                         stateRegionInDataset = true;
                         break;
@@ -249,12 +256,12 @@ public class CustomDataScreen extends JPanel {
                     duplicateStateRegionWarning();
                 } else {
                     try {
-                        ArrayList<String> stateRegionList = stateRegions.get(datasetNum - 1);
+                        ArrayList<String> stateRegionList = datasets.get(datasetNum - 1);
                         stateRegionList.add(state);
                     } catch (IndexOutOfBoundsException ex) {
                         ArrayList<String> stateRegionList = new ArrayList<>();
                         stateRegionList.add(state);
-                        stateRegions.add(datasetNum - 1, stateRegionList);
+                        datasets.add(datasetNum - 1, stateRegionList);
                     }
 
                     addToLabelPanel(datasetNum, state);
@@ -263,7 +270,7 @@ public class CustomDataScreen extends JPanel {
                 dialog.dispose();
 
                 boolean atLeastOneListEmpty = false;
-                for (ArrayList<String> stateRegionList : stateRegions) {
+                for (ArrayList<String> stateRegionList : datasets) {
                     if (stateRegionList.isEmpty()) {
                         atLeastOneListEmpty = true;
                         break;
@@ -330,7 +337,7 @@ public class CustomDataScreen extends JPanel {
         app.refreshCustomDataScreen();
 
         int i = 1;
-        for (ArrayList<String> stateRegionList : stateRegions) {
+        for (ArrayList<String> stateRegionList : datasets) {
             System.out.println(i + ":");
             for (String stateRegion : stateRegionList) {
                 System.out.println(stateRegion);
