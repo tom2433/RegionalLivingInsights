@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -14,50 +13,30 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-
-public class RegionDataVisScreen extends JPanel {
+public class StateDataVisScreen extends JPanel {
     private final App app;
     private ComponentFactory componentFactory;
     private String state1;
     private String state2;
-    private String region1;
-    private String region2;
-    private String selectedBeginMonth;
-    private boolean region1Incorporated;
-    private boolean region2Incorporated;
-    private JButton beginDateBtn;
     private JPanel actionPanel;
+    private JButton beginDateBtn;
+    private String selectedBeginMonth;
 
-    public RegionDataVisScreen(App app) {
+    public StateDataVisScreen(App app) {
         this.app = app;
         this.componentFactory = new ComponentFactory(app);
         this.state1 = null;
         this.state2 = null;
-        this.region1 = null;
-        this.region2 = null;
     }
 
-    public RegionDataVisScreen(App app, String state1, String state2, String region1, String region2) {
+    public StateDataVisScreen(App app, String state1, String state2) {
         super(new BorderLayout());
         this.app = app;
         this.componentFactory = new ComponentFactory(app);
         this.state1 = state1;
         this.state2 = state2;
-        this.region1 = region1;
-        this.region2 = region2;
-        this.region1Incorporated = app.getDataReader().getIncorporatedStatus(state1, region1);
-        this.region2Incorporated = app.getDataReader().getIncorporatedStatus(state2, region2);
 
-        JLabel descLabel = componentFactory.createDescLabel(
-            "Comparing " + region1 + ", " + state1 + (region1Incorporated ? " (Incorporated) vs. " : " (Unincorporated) vs. ")
-            + region2 + ", " + state2 + (region2Incorporated ? " (Incorporated):" : " (Unincorporated):")
-        );
+        JLabel descLabel = componentFactory.createDescLabel("Comparing " + state1 + " vs. " + state2);
         JLabel descLabel2 = componentFactory.createDescLabel("Begin by selecting the begin date to pull data from. The end date to stop pulling data is Dec2024.");
         JLabel descLabel3 = componentFactory.createDescLabel("If you make any accidental selections, click the button below to reset all inputs.");
 
@@ -90,13 +69,6 @@ public class RegionDataVisScreen extends JPanel {
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
-    private JButton createResetBtn() {
-        JButton resetBtn = new JButton("Reset all inputs");
-        resetBtn.addActionListener(e -> app.refreshRegionDataVisScreen(state1, state2, region1, region2));
-        resetBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        return resetBtn;
-    }
-
     private void createBeginDateBtn() {
         beginDateBtn = new JButton("Select begin date");
         beginDateBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -104,7 +76,7 @@ public class RegionDataVisScreen extends JPanel {
     }
 
     private void createBeginDateDialog() {
-        String beginMonth = app.getDataReader().getBeginDateFromRegions(state1, region1, state2, region2);
+        String beginMonth = app.getDataReader().getBeginDateFromStates(state1, state2);
         int beginMonthNum = DataReader.getNumFromMonth(beginMonth.substring(0, 3));
         int beginYearNum = Integer.parseInt(beginMonth.substring(3));
         ArrayList<String> monthsToChoose = new ArrayList<>();
@@ -148,92 +120,22 @@ public class RegionDataVisScreen extends JPanel {
 
     private void beginMonthSelected(String month, JDialog dialog) {
         selectedBeginMonth = month;
-        System.out.println("Begin month selected: " + month);
         dialog.dispose();
         beginDateBtn.setText("Selected begin month: " + selectedBeginMonth);
         beginDateBtn.setEnabled(false);
 
         JButton viewResultsBtn = new JButton("View Results");
         viewResultsBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        viewResultsBtn.addActionListener(e -> viewResults());
+        // viewResultsBtn.addActionListener(e -> viewResults());
 
         actionPanel.add(Box.createVerticalStrut(10));
         actionPanel.add(viewResultsBtn);
     }
 
-    private void viewResults() {
-        beginDateBtn.setEnabled(false);
-        JFreeChart populationBarChart = createPopulationBarChart();
-        ChartPanel barChartPanel = new ChartPanel(populationBarChart);
-        barChartPanel.setPreferredSize(new Dimension(300, 400));
-        actionPanel.add(Box.createVerticalStrut(10));
-        actionPanel.add(barChartPanel);
-        actionPanel.revalidate();
-        actionPanel.repaint();
-
-        JFreeChart zhviLineChart = createZhviLineChart();
-        ChartPanel lineChartPanel = new ChartPanel(zhviLineChart);
-        lineChartPanel.setPreferredSize(new Dimension(300, 300));
-        actionPanel.add(Box.createVerticalStrut(10));
-        actionPanel.add(lineChartPanel);
-        actionPanel.revalidate();
-        actionPanel.repaint();
-
-        componentFactory.createCalcPredictedBtn(actionPanel, lineChartPanel);
-    }
-
-    private JFreeChart createZhviLineChart() {
-        Map<Double, Double> region1zhviData = app.getDataReader().getZhviDataFromRegion(region1, state1, selectedBeginMonth);
-        Map<Double, Double> region2zhviData = app.getDataReader().getZhviDataFromRegion(region2, state2, selectedBeginMonth);
-        XYSeries region1Series = new XYSeries(region1 + ", " + state1);
-        XYSeries region2Series = new XYSeries(region2 + ", " + state2);
-        XYSeriesCollection dataset = new XYSeriesCollection();
-
-        for (Map.Entry<Double, Double> entry : region1zhviData.entrySet()) {
-            region1Series.add(entry.getKey(), entry.getValue());
-        }
-
-        for (Map.Entry<Double, Double> entry : region2zhviData.entrySet()) {
-            region2Series.add(entry.getKey(), entry.getValue());
-        }
-
-        dataset.addSeries(region1Series);
-        dataset.addSeries(region2Series);
-
-        JFreeChart lineChart = ChartFactory.createXYLineChart(
-            "Median home values for " + region1 + ", " + state1 + " vs. " + region2 + ", " + state2,
-            "Date (Year)",
-            "Median home value (USD)",
-            dataset
-        );
-
-        return lineChart;
-    }
-
-    private JFreeChart createPopulationBarChart() {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        dataset.addValue(
-            app.getDataReader().getAvgRegionDensity(),
-            "Average US Region",
-            "Average Density"
-        );
-        dataset.addValue(
-            app.getDataReader().getRegionDensity(region1, state1),
-            "Selected US Region",
-            region1 + ", " + state1);
-        dataset.addValue(
-            app.getDataReader().getRegionDensity(region2, state2),
-            "Selected US Region",
-            region2 + ", " + state2
-        );
-
-        JFreeChart barChart = ChartFactory.createBarChart(
-            "Population Density",
-            "Region",
-            "Population Density Per Square Kilometer",
-            dataset
-        );
-
-        return barChart;
+    private JButton createResetBtn() {
+        JButton resetBtn = new JButton("Reset all inputs");
+        resetBtn.addActionListener(e -> app.refreshStateDataVisScreen(state1, state2));
+        resetBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return resetBtn;
     }
 }

@@ -69,12 +69,6 @@ public class DataReader {
     private double getDoubleFromMonth(String month) {
         String yearString = month.substring(3) + ".";
 
-        // if (getNumFromMonth(month.substring(0, 3)) < 10) {
-        //     resultString += "0";
-        // }
-
-        // resultString += Integer.toString(getNumFromMonth(month.substring(0, 3)));
-
         int monthNum = getNumFromMonth(month.substring(0, 3));
 
         return Double.parseDouble(yearString) + ((double) monthNum / 12.0);
@@ -244,6 +238,97 @@ public class DataReader {
         }
 
         return false;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public String getBeginDateFromStates(String state1, String state2) {
+        String startMonthString = null;
+
+        try {
+            establishConnection();
+
+            ArrayList<Integer> state1regionIDs = new ArrayList<>();
+            ArrayList<Double> state1beginDates = new ArrayList<>();
+            ArrayList<Integer> state2regionIDs = new ArrayList<>();
+            ArrayList<Double> state2beginDates = new ArrayList<>();
+            Double state1startMonth;
+            Double state2startMonth;
+            Double startMonth;
+
+            // find begin month from state1
+            // retrieve all regions from state1
+            resultSet = statement.executeQuery("""
+                SELECT RegionID FROM regions.regions
+                WHERE StateName = '""" + state1 + "';"
+            );
+
+            while (resultSet.next()) {
+                state1regionIDs.add(resultSet.getInt("RegionID"));
+            }
+
+            for (Integer id : state1regionIDs) {
+                state1beginDates.add(getDoubleFromMonth(getStartMonth(id)));
+            }
+
+            state1startMonth = 0.0;
+            for (Double date : state1beginDates) {
+                if (date > state1startMonth) {
+                    state1startMonth = date;
+                }
+            }
+
+            // find begin month from state2
+            // retrieve all regions from state2
+            resultSet = statement.executeQuery("""
+                SELECT RegionID FROM regions.regions
+                WHERE StateName = '""" + state2 + "';"
+            );
+
+            while (resultSet.next()) {
+                state2regionIDs.add(resultSet.getInt("RegionID"));
+            }
+
+            for (Integer id : state2regionIDs) {
+                state2beginDates.add(getDoubleFromMonth(getStartMonth(id)));
+            }
+
+            state2startMonth = 0.0;
+            for (Double date : state2beginDates) {
+                if (date > state2startMonth) {
+                    state2startMonth = date;
+                }
+            }
+
+            startMonth = state1startMonth > state2startMonth ? state1startMonth : state2startMonth;
+
+            // convert startMonth to string
+            int yearInt = (int) ((double) startMonth);
+            double monthDouble = startMonth - (double) yearInt;
+            int monthInt = (int) Math.round(monthDouble * 12);
+            switch (monthInt) {
+                case 1 -> startMonthString = "Jan";
+                case 2 -> startMonthString = "Feb";
+                case 3 -> startMonthString = "Mar";
+                case 4 -> startMonthString = "Apr";
+                case 5 -> startMonthString = "May";
+                case 6 -> startMonthString = "Jun";
+                case 7 -> startMonthString = "Jul";
+                case 8 -> startMonthString = "Aug";
+                case 9 -> startMonthString = "Sep";
+                case 10 -> startMonthString = "Oct";
+                case 11 -> startMonthString = "Nov";
+                case 12 -> startMonthString = "Dec";
+                default -> throw new IllegalArgumentException("An error occurred in processing month data");
+            }
+
+            startMonthString += Integer.toString(yearInt);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return startMonthString;
     }
 
     @SuppressWarnings("CallToPrintStackTrace")

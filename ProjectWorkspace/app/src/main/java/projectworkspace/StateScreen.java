@@ -156,8 +156,7 @@ public class StateScreen extends JPanel {
         if (selectedState1.equals(selectedState2)) {
             duplicateStateWarning();
         } else {
-            //TODO: replace with refreshStateDataVisScreen(selectedState1, selectedState2);
-            app.refreshStateScreen();
+            app.refreshStateDataVisScreen(selectedState1, selectedState2);
         }
     }
 }

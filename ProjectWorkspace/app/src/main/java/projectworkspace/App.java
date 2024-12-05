@@ -34,6 +34,7 @@ public class App implements ActionListener {
         mainPanel.add(new RegionScreen(this), "RegionScreen");
         mainPanel.add(new RegionDataVisScreen(this), "RegionDataVisScreen");
         mainPanel.add(new StateScreen(this), "StateScreen");
+        mainPanel.add(new StateDataVisScreen(this), "StateDataVisScreen");
         mainPanel.add(new CustomDataScreen(this), "CustomDataScreen");
 
         frame.add(mainPanel);
@@ -96,6 +97,12 @@ public class App implements ActionListener {
         removeScreen("RegionDataVisScreen");
         mainPanel.add(new RegionDataVisScreen(this, state1, state2, region1, region2), "RegionDataVisScreen");
         cardLayout.show(mainPanel, "RegionDataVisScreen");
+    }
+
+    public void refreshStateDataVisScreen(String state1, String state2) {
+        removeScreen("StateDataVisScreen");
+        mainPanel.add(new StateDataVisScreen(this, state1, state2), "StateDataVisScreen");
+        cardLayout.show(mainPanel, "StateDataVisScreen");
     }
 
     public JFrame getFrame() {
