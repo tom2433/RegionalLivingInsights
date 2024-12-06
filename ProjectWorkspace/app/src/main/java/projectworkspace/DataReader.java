@@ -128,12 +128,39 @@ public class DataReader {
         return numRemainingMonths;
     }
 
-    private double getDoubleFromMonth(String month) {
+    public static double getDoubleFromMonth(String month) {
         String yearString = month.substring(3) + ".";
 
         int monthNum = getNumFromMonth(month.substring(0, 3));
 
         return Double.parseDouble(yearString) + ((double) monthNum / 12.0);
+    }
+
+    public static String getMonthFromDouble(double month) {
+        String startMonthString;
+
+        int yearInt = (int) (month);
+        double monthDouble = month - (double) yearInt;
+        int monthInt = (int) Math.round(monthDouble * 12);
+        switch (monthInt) {
+            case 1 -> startMonthString = "Jan";
+            case 2 -> startMonthString = "Feb";
+            case 3 -> startMonthString = "Mar";
+            case 4 -> startMonthString = "Apr";
+            case 5 -> startMonthString = "May";
+            case 6 -> startMonthString = "Jun";
+            case 7 -> startMonthString = "Jul";
+            case 8 -> startMonthString = "Aug";
+            case 9 -> startMonthString = "Sep";
+            case 10 -> startMonthString = "Oct";
+            case 11 -> startMonthString = "Nov";
+            case 12 -> startMonthString = "Dec";
+            default -> throw new IllegalArgumentException("An error occurred in processing month data");
+        }
+
+        startMonthString += Integer.toString(yearInt);
+
+        return startMonthString;
     }
 
     private String getNextMonth(String currentMonth) {
@@ -349,6 +376,69 @@ public class DataReader {
     }
 
     @SuppressWarnings("CallToPrintStackTrace")
+    public String getBeginDateFromState(String state) {
+        String startMonthString = null;
+
+        try {
+            establishConnection();
+
+            ArrayList<Integer> state1regionIDs = new ArrayList<>();
+            ArrayList<Double> state1beginDates = new ArrayList<>();
+            Double startMonth;
+
+            // find begin month from state1
+            // retrieve all regions from state1
+            resultSet = statement.executeQuery("""
+                SELECT RegionID FROM regions.regions
+                WHERE StateName = '""" + state + "';"
+            );
+
+            while (resultSet.next()) {
+                state1regionIDs.add(resultSet.getInt("RegionID"));
+            }
+
+            for (Integer id : state1regionIDs) {
+                state1beginDates.add(getDoubleFromMonth(getStartMonth(id)));
+            }
+
+            startMonth = 0.0;
+            for (Double date : state1beginDates) {
+                if (date > startMonth) {
+                    startMonth = date;
+                }
+            }
+
+            // convert startMonth to string
+            int yearInt = (int) ((double) startMonth);
+            double monthDouble = startMonth - (double) yearInt;
+            int monthInt = (int) Math.round(monthDouble * 12);
+            switch (monthInt) {
+                case 1 -> startMonthString = "Jan";
+                case 2 -> startMonthString = "Feb";
+                case 3 -> startMonthString = "Mar";
+                case 4 -> startMonthString = "Apr";
+                case 5 -> startMonthString = "May";
+                case 6 -> startMonthString = "Jun";
+                case 7 -> startMonthString = "Jul";
+                case 8 -> startMonthString = "Aug";
+                case 9 -> startMonthString = "Sep";
+                case 10 -> startMonthString = "Oct";
+                case 11 -> startMonthString = "Nov";
+                case 12 -> startMonthString = "Dec";
+                default -> throw new IllegalArgumentException("An error occurred in processing month data");
+            }
+
+            startMonthString += Integer.toString(yearInt);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return startMonthString;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
     public String getBeginDateFromStates(String state1, String state2) {
         String startMonthString = null;
 
@@ -437,6 +527,33 @@ public class DataReader {
         }
 
         return startMonthString;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public String getBeginDateFromRegion(String state, String region) {
+        int regionID;
+        String regionStartMonth = null;
+
+        try {
+            establishConnection();
+
+            resultSet = statement.executeQuery("""
+                SELECT RegionID
+                FROM regions.regions
+                WHERE StateName = '""" + state + "' && RegionName = '" + region + "';"
+            );
+
+            resultSet.next();
+            regionID = resultSet.getInt("RegionID");
+
+            regionStartMonth = getStartMonth(regionID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return regionStartMonth;
     }
 
     @SuppressWarnings("CallToPrintStackTrace")
