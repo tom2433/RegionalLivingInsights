@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -18,6 +19,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 public class CustomDataVisScreen extends JPanel {
     private final App app;
@@ -158,6 +161,39 @@ public class CustomDataVisScreen extends JPanel {
         actionPanel.add(barChartPanel);
         actionPanel.revalidate();
         actionPanel.repaint();
+
+        JFreeChart zhviLineChart = createZhviLineChart();
+        ChartPanel lineChartPanel = new ChartPanel(zhviLineChart);
+        lineChartPanel.setPreferredSize(new Dimension(300, 300));
+        actionPanel.add(Box.createVerticalStrut(10));
+        actionPanel.add(lineChartPanel);
+        actionPanel.revalidate();
+        actionPanel.repaint();
+
+        componentFactory.createCalcPredictedBtn(actionPanel, lineChartPanel);
+    }
+
+    private JFreeChart createZhviLineChart() {
+        XYSeriesCollection finalXYSeriesCollection = new XYSeriesCollection();
+
+        for (ArrayList<String> dataset : datasets) {
+            Map<Double, Double> datasetZhviData = app.getDataReader().getZhviDataFromSet(dataset, selectedBeginMonth);
+            XYSeries datasetSeries = new XYSeries("Set " + (datasets.indexOf(dataset) + 1));
+
+            for (Map.Entry<Double, Double> entry : datasetZhviData.entrySet()) {
+                datasetSeries.add(entry.getKey(), entry.getValue());
+            }
+            finalXYSeriesCollection.addSeries(datasetSeries);
+        }
+
+        JFreeChart lineChart = ChartFactory.createXYLineChart(
+            "Median Home Values For " + datasets.size() + " Custom Datasets",
+            "Date (year)",
+            "Median Home Value (USD)",
+            finalXYSeriesCollection
+        );
+
+        return lineChart;
     }
 
     private JFreeChart createPopulationBarChart() {

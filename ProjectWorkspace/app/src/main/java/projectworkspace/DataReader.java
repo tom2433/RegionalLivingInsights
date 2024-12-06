@@ -64,6 +64,106 @@ public class DataReader {
     }
 
     @SuppressWarnings("CallToPrintStackTrace")
+    public Map<Double, Double> getZhviDataFromSet(ArrayList<String> dataset, String startMonth) {
+        int numMonths = getNumOfRemainingMonths(startMonth);
+        Map<Double, Double> XYSeriesData = new HashMap<>();
+        double[][] yValueSets = new double[dataset.size()][numMonths];
+        String selectAllMonthsString;
+        String currentMonth;
+        double lastNonNullValue = 0.0;
+
+        try {
+            establishConnection();
+
+            int index = 0;
+            for (String area : dataset) {
+                double[] values = new double[numMonths];
+                String query;
+
+                // if current area is a state
+                if (area.length() == 2) {
+                    currentMonth = startMonth;
+                    selectAllMonthsString = "";
+                    for (int i = 0; i < numMonths; i++) {
+                        selectAllMonthsString += "AVG(region_zhvi_values." + currentMonth + ") AS 'Month " + i + "'";
+                        if (i != numMonths - 1) {
+                            selectAllMonthsString += ", ";
+                        }
+                        currentMonth = getNextMonth(currentMonth);
+                    }
+
+                    query =
+                        "SELECT " + selectAllMonthsString +
+                        "FROM region_zhvi_values " +
+                        "INNER JOIN regions " +
+                        "ON region_zhvi_values.RegionID = regions.RegionID " +
+                        "WHERE regions.StateName = '" + area + "';";
+                // else (curent area not a state)
+                } else {
+                    String region = area.substring(0, area.indexOf(',')).trim();
+                    String state = area.substring(area.indexOf(',') + 2).trim();
+
+                    currentMonth = startMonth;
+                    selectAllMonthsString = "";
+                    for (int i = 0; i < numMonths; i++) {
+                        selectAllMonthsString += "region_zhvi_values." + currentMonth + " AS 'Month " + i + "'";
+                        if (i != numMonths - 1) {
+                            selectAllMonthsString += ", ";
+                        }
+                        currentMonth = getNextMonth(currentMonth);
+                    }
+
+                    query =
+                        "SELECT " + selectAllMonthsString +
+                        "FROM region_zhvi_values " +
+                        "INNER JOIN regions " +
+                        "ON region_zhvi_values.RegionID = regions.RegionID " +
+                        "WHERE regions.StateName = '" + state + "' && regions.RegionName = '" + region + "'";
+                }
+
+                resultSet = statement.executeQuery(query);
+
+                while (resultSet.next()) {
+                    for (int i = 0; i < numMonths; i++) {
+                        double result = resultSet.getDouble("Month " + i);
+                        if (result == 0.0) {
+                            result = lastNonNullValue;
+                        } else {
+                            lastNonNullValue = result;
+                        }
+                        values[i] = result;
+                    }
+                }
+
+                yValueSets[index] = values;
+                index++;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        double[] averagedYValues = new double[numMonths];
+
+        for (int i = 0; i < yValueSets[0].length; i++) {
+            double sum = 0.0;
+            for (int j = 0; j < yValueSets.length; j++) {
+                sum += yValueSets[j][i];
+            }
+            averagedYValues[i] = sum / (double) yValueSets.length;
+        }
+
+        currentMonth = startMonth;
+        for (int i = 0; i < numMonths; i++) {
+            XYSeriesData.put(getDoubleFromMonth(currentMonth), averagedYValues[i]);
+            currentMonth = getNextMonth(currentMonth);
+        }
+
+        return XYSeriesData;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
     public Map<Double, Double> getZhviDataFromState(String state, String startMonth) {
         ArrayList<Integer> regionIDs = new ArrayList<>();
         String currentMonth = startMonth;

@@ -32,6 +32,7 @@ public class RegionDataVisScreen extends JPanel {
     private boolean region1Incorporated;
     private boolean region2Incorporated;
     private JButton beginDateBtn;
+    private JButton viewResultsBtn;
     private JPanel actionPanel;
 
     public RegionDataVisScreen(App app) {
@@ -153,7 +154,7 @@ public class RegionDataVisScreen extends JPanel {
         beginDateBtn.setText("Selected begin month: " + selectedBeginMonth);
         beginDateBtn.setEnabled(false);
 
-        JButton viewResultsBtn = new JButton("View Results");
+        viewResultsBtn = new JButton("View Results");
         viewResultsBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         viewResultsBtn.addActionListener(e -> viewResults());
 
@@ -163,6 +164,8 @@ public class RegionDataVisScreen extends JPanel {
 
     private void viewResults() {
         beginDateBtn.setEnabled(false);
+        viewResultsBtn.setEnabled(false);
+
         JFreeChart populationBarChart = createPopulationBarChart();
         ChartPanel barChartPanel = new ChartPanel(populationBarChart);
         barChartPanel.setPreferredSize(new Dimension(300, 400));
