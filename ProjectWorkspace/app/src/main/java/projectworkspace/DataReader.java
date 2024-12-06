@@ -15,6 +15,55 @@ public class DataReader {
     private ResultSet resultSet = null;
 
     @SuppressWarnings("CallToPrintStackTrace")
+    public int getDensityFromSet(ArrayList<String> set) {
+        ArrayList<Integer> densities = new ArrayList<>();
+        int avgDensity = 0;
+
+        try {
+            establishConnection();
+
+            for (String area : set) {
+                // if current area is a state
+                if (area.length() == 2) {
+                    densities.add(getDensityFromState(area));
+                // else (current area not a state)
+                } else {
+                    densities.add(getDensityFromRegion(area));
+                }
+            }
+
+            int sum = 0;
+            for (int density : densities) {
+                sum += density;
+            }
+            avgDensity = sum / densities.size();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return avgDensity;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    private int getDensityFromRegion(String regionAndState) throws SQLException {
+        String region = regionAndState.substring(0, regionAndState.indexOf(',')).trim();
+        String state = regionAndState.substring(regionAndState.indexOf(',') + 2).trim();
+
+        resultSet = statement.executeQuery("""
+            SELECT region_populations.PopulationDensity, regions.RegionName, regions.StateName
+            FROM region_populations
+            INNER JOIN regions
+            ON region_populations.RegionID = regions.RegionID
+            WHERE regions.StateName = '""" + state + "' && RegionName = '" + region + "';"
+        );
+
+        resultSet.next();
+        return resultSet.getInt("PopulationDensity");
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
     public Map<Double, Double> getZhviDataFromState(String state, String startMonth) {
         ArrayList<Integer> regionIDs = new ArrayList<>();
         String currentMonth = startMonth;
@@ -254,20 +303,27 @@ public class DataReader {
         return avgStateDensity;
     }
 
+    private int getDensityFromState(String state) throws SQLException {
+        int avgRegionDensity;
+
+        resultSet = statement.executeQuery("""
+            SELECT AvgDensity
+            FROM statedensityview
+            WHERE StateName = '""" + state + "';");
+
+        resultSet.next();
+        double avgDensity = resultSet.getDouble("AvgDensity");
+        avgRegionDensity = (int) avgDensity;
+        return avgRegionDensity;
+    }
+
     @SuppressWarnings("CallToPrintStackTrace")
     public int getStateDensity(String state) {
         int avgRegionDensity = 0;
 
         try {
             establishConnection();
-
-            resultSet = statement.executeQuery("""
-                SELECT AvgDensity
-                FROM statedensityview
-                WHERE StateName = '""" + state + "';");
-            resultSet.next();
-            double avgDensity = resultSet.getDouble("AvgDensity");
-            avgRegionDensity = (int) avgDensity;
+            avgRegionDensity = getDensityFromState(state);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

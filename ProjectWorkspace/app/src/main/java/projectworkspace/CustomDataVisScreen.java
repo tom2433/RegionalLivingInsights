@@ -14,6 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
+
 public class CustomDataVisScreen extends JPanel {
     private final App app;
     private ComponentFactory componentFactory;
@@ -21,6 +26,7 @@ public class CustomDataVisScreen extends JPanel {
     private JPanel actionPanel;
     private JButton beginDateBtn;
     private String selectedBeginMonth;
+    private JButton viewResultsBtn;
 
     public CustomDataVisScreen(App app) {
         this.app = app;
@@ -37,6 +43,7 @@ public class CustomDataVisScreen extends JPanel {
         JLabel descLabel = componentFactory.createDescLabel("Comparing all custom datasets");
         JLabel descLabel2 =  componentFactory.createDescLabel("Begin by selecting the begin date to pull data from. The end date to stop pulling data is Oct2024.");
         JLabel descLabel3 = componentFactory.createDescLabel("If you make any accidental selections, click the button below to reset all inputs");
+        JLabel dividerLabel = componentFactory.createDescLabel("------------------------------------");
 
         JPanel contentPanel = componentFactory.createContentPanel();
         contentPanel.add(descLabel, BorderLayout.NORTH);
@@ -50,6 +57,17 @@ public class CustomDataVisScreen extends JPanel {
         actionPanel.add(descLabel2);
         actionPanel.add(Box.createVerticalStrut(2));
         actionPanel.add(descLabel3);
+        for (ArrayList<String> dataset : datasets) {
+            JLabel setLabel = componentFactory.createDescLabel("Set " + (datasets.indexOf(dataset) + 1) + " ------------------------------");
+            actionPanel.add(Box.createVerticalStrut(2));
+            actionPanel.add(setLabel);
+            actionPanel.add(Box.createVerticalStrut(2));
+            for (String area : dataset) {
+                JLabel areaLabel = componentFactory.createDescLabel(area);
+                actionPanel.add(areaLabel);
+            }
+        }
+        actionPanel.add(dividerLabel);
         actionPanel.add(Box.createVerticalStrut(2));
         actionPanel.add(resetBtn);
         actionPanel.add(Box.createVerticalStrut(10));
@@ -122,7 +140,7 @@ public class CustomDataVisScreen extends JPanel {
         beginDateBtn.setText("Selected begin month: " + selectedBeginMonth);
         beginDateBtn.setEnabled(false);
 
-        JButton viewResultsBtn = new JButton("View Results");
+        viewResultsBtn = new JButton("View Results");
         viewResultsBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         viewResultsBtn.addActionListener(e -> viewResults());
 
@@ -131,22 +149,43 @@ public class CustomDataVisScreen extends JPanel {
     }
 
     private void viewResults() {
-        System.out.println("Selected begin month: " + selectedBeginMonth);
-        // JFreeChart populationBarChart = createPopulationBarChart();
+        viewResultsBtn.setEnabled(false);
+
+        JFreeChart populationBarChart = createPopulationBarChart();
+        ChartPanel barChartPanel = new ChartPanel(populationBarChart);
+        barChartPanel.setPreferredSize(new Dimension(300, 400));
+        actionPanel.add(Box.createVerticalStrut(10));
+        actionPanel.add(barChartPanel);
+        actionPanel.revalidate();
+        actionPanel.repaint();
     }
 
-    // private JFreeChart createPopulationBarChart() {
-    //     DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-    //     dataset.addValue(
-    //         app.getDataReader().getAvgStateDensity(),
-    //         "Average US State",
-    //         "Average Density"
-    //     );
+    private JFreeChart createPopulationBarChart() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset.addValue(
+            app.getDataReader().getAvgStateDensity(),
+            "Average US State",
+            "Average Density"
+        );
 
-    //     for (ArrayList<String> dataset : datasets) {
+        // add value to dataset for each set
+        for (ArrayList<String> set : datasets) {
+            dataset.addValue(
+                app.getDataReader().getDensityFromSet(set),
+                "Custom Dataset",
+                "Set " + (datasets.indexOf(set) + 1)
+            );
+        }
 
-    //     }
-    // }
+        JFreeChart barChart = ChartFactory.createBarChart(
+            "Population Densities",
+            "Area",
+            "Population Density Per Square Kilometer",
+            dataset
+        );
+
+        return barChart;
+    }
 
     private String getBeginMonth() {
         ArrayList<Double> beginMonths = new ArrayList<>();

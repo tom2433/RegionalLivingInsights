@@ -29,6 +29,7 @@ public class StateDataVisScreen extends JPanel {
     private JPanel actionPanel;
     private JButton beginDateBtn;
     private String selectedBeginMonth;
+    private JButton viewResultsBtn;
 
     public StateDataVisScreen(App app) {
         this.app = app;
@@ -132,7 +133,7 @@ public class StateDataVisScreen extends JPanel {
         beginDateBtn.setText("Selected begin month: " + selectedBeginMonth);
         beginDateBtn.setEnabled(false);
 
-        JButton viewResultsBtn = new JButton("View Results");
+        viewResultsBtn = new JButton("View Results");
         viewResultsBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         viewResultsBtn.addActionListener(e -> viewResults());
 
@@ -148,6 +149,7 @@ public class StateDataVisScreen extends JPanel {
     }
 
     private void viewResults() {
+        viewResultsBtn.setEnabled(false);
         JFreeChart populationBarChart = createPopulationBarChart();
         ChartPanel barChartPanel = new ChartPanel(populationBarChart);
         barChartPanel.setPreferredSize(new Dimension(300, 400));
