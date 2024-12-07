@@ -15,6 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
+/**
+ * This class creates and handles all operations and components within the CustomDataScreen.
+ */
 public class CustomDataScreen extends JPanel {
     private final App app;
     private ComponentFactory componentFactory;
@@ -23,19 +26,27 @@ public class CustomDataScreen extends JPanel {
     private JButton nextBtn;
     private ArrayList<ArrayList<String>> datasets;
 
+    /**
+     * Constructs a CustomDataScreen object that belongs to a specified App.
+     *
+     * @param app the App object that this CustomDataScreen object belongs to.
+     */
     public CustomDataScreen(App app) {
+        // create this object as a child of JPanel with a BorderLayout
         super(new BorderLayout());
         this.app = app;
         this.componentFactory = new ComponentFactory(app);
         datasets = new ArrayList<>();
         labelPanels = new ArrayList<>();
 
+        // create components
         JLabel descLabel = componentFactory.createDescLabel("This is the CustomDataScreen.");
         JButton backBtn = componentFactory.createBackButton();
         JButton resetBtn = createResetBtn();
         JButton addDatasetBtn = createAddDatasetBtn();
         createNextBtn();
 
+        // add components to actionPanel
         actionPanel = new JPanel();
         actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
         actionPanel.add(Box.createVerticalStrut(2));
@@ -43,23 +54,32 @@ public class CustomDataScreen extends JPanel {
         actionPanel.add(Box.createVerticalStrut(2));
         actionPanel.add(addDatasetBtn);
 
+        // add actionPanel to contentPanel
         JPanel contentPanel = componentFactory.createContentPanel();
         contentPanel.add(descLabel, BorderLayout.NORTH);
         contentPanel.add(actionPanel, BorderLayout.CENTER);
 
+        // add contentPanel to scrollPane
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
+        // add all components to parent JPanel (this)
         this.add(backBtn, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
         this.add(nextBtn, BorderLayout.SOUTH);
 
-        addDataset(1);
-        addDataset(2);
+        // add default of two custom datasets (user can add more)
+        addDataset();
+        addDataset();
     }
 
-    private void addDataset(int datasetNum) {
+    /**
+     * Adds another custom dataset that the user can add areas to.
+     *
+     */
+    private void addDataset() {
+        int datasetNum = datasets.size() + 1;
         ArrayList<String> dataset = new ArrayList<>();
         datasets.add(dataset);
 
@@ -85,7 +105,7 @@ public class CustomDataScreen extends JPanel {
     private JButton createAddDatasetBtn() {
         JButton addDatasetBtn = new JButton("Add another dataset");
         addDatasetBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        addDatasetBtn.addActionListener(e -> addDataset(datasets.size() + 1));
+        addDatasetBtn.addActionListener(e -> addDataset());
         return addDatasetBtn;
     }
 

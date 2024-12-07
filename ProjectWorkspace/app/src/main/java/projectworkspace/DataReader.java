@@ -67,97 +67,66 @@ public class DataReader {
     public Map<Double, Double> getZhviDataFromSet(ArrayList<String> dataset, String startMonth) {
         int numMonths = getNumOfRemainingMonths(startMonth);
         Map<Double, Double> XYSeriesData = new HashMap<>();
-        double[][] yValueSets = new double[dataset.size()][numMonths];
-        String selectAllMonthsString;
+        String selectAllMonthsString = "";
         String currentMonth;
         double lastNonNullValue = 0.0;
+
+        String[] months = new String[numMonths];
+        currentMonth = startMonth;
+        for (int i = 0; i < numMonths; i++) {
+            months[i] = currentMonth;
+            selectAllMonthsString += "AVG(" + currentMonth + ") AS '" + currentMonth + "'";
+            if (i != numMonths - 1) {
+                selectAllMonthsString += ", ";
+            }
+
+            currentMonth = getNextMonth(currentMonth);
+        }
+
+        String query =
+            "SELECT " + selectAllMonthsString + " " +
+            "FROM region_zhvi_values " +
+            "INNER JOIN regions " +
+            "ON region_zhvi_values.RegionID = regions.RegionID " +
+            "WHERE";
 
         try {
             establishConnection();
 
-            int index = 0;
             for (String area : dataset) {
-                double[] values = new double[numMonths];
-                String query;
-
                 // if current area is a state
                 if (area.length() == 2) {
-                    currentMonth = startMonth;
-                    selectAllMonthsString = "";
-                    for (int i = 0; i < numMonths; i++) {
-                        selectAllMonthsString += "AVG(region_zhvi_values." + currentMonth + ") AS 'Month " + i + "'";
-                        if (i != numMonths - 1) {
-                            selectAllMonthsString += ", ";
-                        }
-                        currentMonth = getNextMonth(currentMonth);
-                    }
-
-                    query =
-                        "SELECT " + selectAllMonthsString +
-                        "FROM region_zhvi_values " +
-                        "INNER JOIN regions " +
-                        "ON region_zhvi_values.RegionID = regions.RegionID " +
-                        "WHERE regions.StateName = '" + area + "';";
-                // else (curent area not a state)
+                    query += " StateName = '" + area + "'";
+                // else (current area not a state)
                 } else {
                     String region = area.substring(0, area.indexOf(',')).trim();
                     String state = area.substring(area.indexOf(',') + 2).trim();
-
-                    currentMonth = startMonth;
-                    selectAllMonthsString = "";
-                    for (int i = 0; i < numMonths; i++) {
-                        selectAllMonthsString += "region_zhvi_values." + currentMonth + " AS 'Month " + i + "'";
-                        if (i != numMonths - 1) {
-                            selectAllMonthsString += ", ";
-                        }
-                        currentMonth = getNextMonth(currentMonth);
-                    }
-
-                    query =
-                        "SELECT " + selectAllMonthsString +
-                        "FROM region_zhvi_values " +
-                        "INNER JOIN regions " +
-                        "ON region_zhvi_values.RegionID = regions.RegionID " +
-                        "WHERE regions.StateName = '" + state + "' && regions.RegionName = '" + region + "'";
+                    query += " (StateName = '" + state + "' && RegionName = '" + region + "')";
                 }
 
-                resultSet = statement.executeQuery(query);
-
-                while (resultSet.next()) {
-                    for (int i = 0; i < numMonths; i++) {
-                        double result = resultSet.getDouble("Month " + i);
-                        if (result == 0.0) {
-                            result = lastNonNullValue;
-                        } else {
-                            lastNonNullValue = result;
-                        }
-                        values[i] = result;
-                    }
+                if (dataset.indexOf(area) != dataset.size() - 1) {
+                    query += " ||";
+                } else {
+                    query += ";";
                 }
+            }
 
-                yValueSets[index] = values;
-                index++;
+            resultSet = statement.executeQuery(query);
+            resultSet.next();
+
+            for (int i = 0; i < numMonths; i++) {
+                double yVal = resultSet.getDouble(months[i]);
+                if (yVal == 0.0) {
+                    yVal = lastNonNullValue;
+                } else {
+                    lastNonNullValue = yVal;
+                }
+                XYSeriesData.put(getDoubleFromMonth(months[i]), yVal);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             close();
-        }
-
-        double[] averagedYValues = new double[numMonths];
-
-        for (int i = 0; i < yValueSets[0].length; i++) {
-            double sum = 0.0;
-            for (int j = 0; j < yValueSets.length; j++) {
-                sum += yValueSets[j][i];
-            }
-            averagedYValues[i] = sum / (double) yValueSets.length;
-        }
-
-        currentMonth = startMonth;
-        for (int i = 0; i < numMonths; i++) {
-            XYSeriesData.put(getDoubleFromMonth(currentMonth), averagedYValues[i]);
-            currentMonth = getNextMonth(currentMonth);
         }
 
         return XYSeriesData;
@@ -531,6 +500,18 @@ public class DataReader {
         return false;
     }
 
+    private String[] getAllMonths() {
+        int numMonths = getNumOfRemainingMonths("Jan2000");
+        String[] months = new String[numMonths];
+            String currentMonth = "Jan2000";
+            for (int i = 0; i < numMonths; i++) {
+                months[i] = currentMonth;
+                currentMonth = getNextMonth(currentMonth);
+            }
+
+        return months;
+    }
+
     @SuppressWarnings("CallToPrintStackTrace")
     public String getBeginDateFromState(String state) {
         String startMonthString = null;
@@ -538,53 +519,35 @@ public class DataReader {
         try {
             establishConnection();
 
-            ArrayList<Integer> state1regionIDs = new ArrayList<>();
-            ArrayList<Double> state1beginDates = new ArrayList<>();
-            Double startMonth;
+            String selectAllMonths = "";
 
-            // find begin month from state1
-            // retrieve all regions from state1
-            resultSet = statement.executeQuery("""
-                SELECT RegionID FROM regions.regions
-                WHERE StateName = '""" + state + "';"
-            );
+            int numMonths = getNumOfRemainingMonths("Jan2000");
+            String[] months = getAllMonths();
 
-            while (resultSet.next()) {
-                state1regionIDs.add(resultSet.getInt("RegionID"));
-            }
-
-            for (Integer id : state1regionIDs) {
-                state1beginDates.add(getDoubleFromMonth(getStartMonth(id)));
-            }
-
-            startMonth = 0.0;
-            for (Double date : state1beginDates) {
-                if (date > startMonth) {
-                    startMonth = date;
+            for (int i = 0; i < numMonths; i++) {
+                selectAllMonths += "AVG(" + months[i] + ") AS '" + months[i] + "'";
+                if (i != numMonths - 1) {
+                    selectAllMonths += ", ";
                 }
             }
 
-            // convert startMonth to string
-            int yearInt = (int) ((double) startMonth);
-            double monthDouble = startMonth - (double) yearInt;
-            int monthInt = (int) Math.round(monthDouble * 12);
-            switch (monthInt) {
-                case 1 -> startMonthString = "Jan";
-                case 2 -> startMonthString = "Feb";
-                case 3 -> startMonthString = "Mar";
-                case 4 -> startMonthString = "Apr";
-                case 5 -> startMonthString = "May";
-                case 6 -> startMonthString = "Jun";
-                case 7 -> startMonthString = "Jul";
-                case 8 -> startMonthString = "Aug";
-                case 9 -> startMonthString = "Sep";
-                case 10 -> startMonthString = "Oct";
-                case 11 -> startMonthString = "Nov";
-                case 12 -> startMonthString = "Dec";
-                default -> throw new IllegalArgumentException("An error occurred in processing month data");
-            }
+            String query =
+                "SELECT " + selectAllMonths + " " +
+                "FROM region_zhvi_values " +
+                "INNER JOIN regions " +
+                "ON region_zhvi_values.RegionID = regions.RegionID " +
+                "WHERE StateName = '" + state + "';";
 
-            startMonthString += Integer.toString(yearInt);
+            resultSet = statement.executeQuery(query);
+
+            resultSet.next();
+            for (int i = 0; i < numMonths; i++) {
+                Double yVal = resultSet.getDouble(months[i]);
+                if (yVal != 0.0) {
+                    startMonthString = months[i];
+                    break;
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -596,93 +559,14 @@ public class DataReader {
 
     @SuppressWarnings("CallToPrintStackTrace")
     public String getBeginDateFromStates(String state1, String state2) {
-        String startMonthString = null;
+        String state1StartMonth = getBeginDateFromState(state1);
+        String state2StartMonth = getBeginDateFromState(state2);
 
-        try {
-            establishConnection();
-
-            ArrayList<Integer> state1regionIDs = new ArrayList<>();
-            ArrayList<Double> state1beginDates = new ArrayList<>();
-            ArrayList<Integer> state2regionIDs = new ArrayList<>();
-            ArrayList<Double> state2beginDates = new ArrayList<>();
-            Double state1startMonth;
-            Double state2startMonth;
-            Double startMonth;
-
-            // find begin month from state1
-            // retrieve all regions from state1
-            resultSet = statement.executeQuery("""
-                SELECT RegionID FROM regions.regions
-                WHERE StateName = '""" + state1 + "';"
-            );
-
-            while (resultSet.next()) {
-                state1regionIDs.add(resultSet.getInt("RegionID"));
-            }
-
-            for (Integer id : state1regionIDs) {
-                state1beginDates.add(getDoubleFromMonth(getStartMonth(id)));
-            }
-
-            state1startMonth = 0.0;
-            for (Double date : state1beginDates) {
-                if (date > state1startMonth) {
-                    state1startMonth = date;
-                }
-            }
-
-            // find begin month from state2
-            // retrieve all regions from state2
-            resultSet = statement.executeQuery("""
-                SELECT RegionID FROM regions.regions
-                WHERE StateName = '""" + state2 + "';"
-            );
-
-            while (resultSet.next()) {
-                state2regionIDs.add(resultSet.getInt("RegionID"));
-            }
-
-            for (Integer id : state2regionIDs) {
-                state2beginDates.add(getDoubleFromMonth(getStartMonth(id)));
-            }
-
-            state2startMonth = 0.0;
-            for (Double date : state2beginDates) {
-                if (date > state2startMonth) {
-                    state2startMonth = date;
-                }
-            }
-
-            startMonth = state1startMonth > state2startMonth ? state1startMonth : state2startMonth;
-
-            // convert startMonth to string
-            int yearInt = (int) ((double) startMonth);
-            double monthDouble = startMonth - (double) yearInt;
-            int monthInt = (int) Math.round(monthDouble * 12);
-            switch (monthInt) {
-                case 1 -> startMonthString = "Jan";
-                case 2 -> startMonthString = "Feb";
-                case 3 -> startMonthString = "Mar";
-                case 4 -> startMonthString = "Apr";
-                case 5 -> startMonthString = "May";
-                case 6 -> startMonthString = "Jun";
-                case 7 -> startMonthString = "Jul";
-                case 8 -> startMonthString = "Aug";
-                case 9 -> startMonthString = "Sep";
-                case 10 -> startMonthString = "Oct";
-                case 11 -> startMonthString = "Nov";
-                case 12 -> startMonthString = "Dec";
-                default -> throw new IllegalArgumentException("An error occurred in processing month data");
-            }
-
-            startMonthString += Integer.toString(yearInt);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            close();
+        if (getDoubleFromMonth(state1StartMonth) > getDoubleFromMonth(state2StartMonth)) {
+            return state1StartMonth;
+        } else {
+            return state2StartMonth;
         }
-
-        return startMonthString;
     }
 
     @SuppressWarnings("CallToPrintStackTrace")
