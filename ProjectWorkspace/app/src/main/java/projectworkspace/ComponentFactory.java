@@ -24,6 +24,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 /**
  * This class creates specific components like JLabels, JButtons, JPanels, etc. It also creates
  * graphs with predicted data for a user-specified number of years and adds them to an actionPanel.
+ *
+ * @author Thomas England
  */
 public class ComponentFactory {
     private final App app;

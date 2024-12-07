@@ -14,6 +14,8 @@ import javax.swing.JPanel;
  * containing all Screens (classes extending JPanels). The main purpose of this class is to manage
  * the different screens (when to show what screen) , hold the main JFrame, and store an instance
  * of the DataReader class which retrieves data from the database to display in the DataVisScreens.
+ *
+ * @author Thomas England
  */
 public class App implements ActionListener {
     private final CardLayout cardLayout;

@@ -16,7 +16,11 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 /**
- * This class creates and handles all operations and components within the CustomDataScreen.
+ * This class creates and handles all operations and components within the CustomDataScreen. It
+ * allows the user to create as many custom datasets as they want with as many areas in each
+ * dataset as they want.
+ *
+ * @author Thomas England
  */
 public class CustomDataScreen extends JPanel {
     private final App app;
@@ -359,11 +363,13 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Called when a stateBtn is clicked from the dialog prompt 'select state to add to set'. Checks if
+     * Called when a stateBtn is clicked from the dialog prompt 'select state to add to set'.
+     * Adds the state to a given dataset only if the state does not exist in any datasets.
      *
-     * @param datasetNum
-     * @param state
-     * @param dialog
+     * @param datasetNum int containing the number of the given dataset to potentially add the
+     *                   user-selected state to
+     * @param state String containing the user-selected state to potentially add to dataset
+     * @param dialog JDialog containing the stateBtn that was clicked
      */
     private void stateBtnClicked(int datasetNum, String state, JDialog dialog) {
         // determine if state already in any datasets
