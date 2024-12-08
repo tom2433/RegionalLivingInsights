@@ -20,6 +20,7 @@ Official Website: [https://www.jfree.org/jfreechart/](https://www.jfree.org/jfre
 - **Step 2**: Import tables 'regions', 'region_populations', and 'region_zhvi_values' using the create_tables sql file located at '/RegionalLivingInsights/regions_database/tables/' along with each table's corresponding csv file.
 - **Step 3**: Import views using the views sql file located at '/RegionalLivingInsights/regions_database/views/views.sql'
 - **Step 4**: Change the string values 'username' and 'password' on lines 30 and 31 of '/RegionalLivingInsights/ProjectWorkspace/app/src/main/java/projectworkspace/DataReader.java' to your username and password used to connect to your local databases.
+___
 
 ### Front End
 
@@ -60,6 +61,7 @@ Official Website: [https://www.jfree.org/jfreechart/](https://www.jfree.org/jfre
 - Used excel and java to combine these two datasets on RegionID found in the zillow dataset.
 
 # File Locations Summarized
+
 - Documentation: '/RegionalLivingInsights/README.md'
 - ER diagram: '/RegionalLivingInsights/RegionalLivingInsights.dia'
 - Initial datasets (before normalization): '/RegionalLivingInsights/initial_data/'
@@ -67,3 +69,4 @@ Official Website: [https://www.jfree.org/jfreechart/](https://www.jfree.org/jfre
 - MySQL tables: '/RegionalLivingInsights/regions_database/tables/'
 - MySQL views: '/RegionalLivingInsights/regions_database/views/'
 - Source code files: 'RegionalLivingInsights/ProjectWorkspace/app/src/main/java/projectworkspace/'
+___
