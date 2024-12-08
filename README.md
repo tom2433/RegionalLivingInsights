@@ -1,4 +1,5 @@
 This README file contains all submission documentation for the final project including references, installation instructions, usage instructions, and all additional comments/instructions.
+- Thomas England
 
 # RegionalLivingInsights
 
