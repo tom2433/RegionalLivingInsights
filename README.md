@@ -8,7 +8,8 @@ JFreeChart - open source chart libray for creating bar charts and line charts
 <p>Official Website: https://www.jfree.org/jfreechart/</p>
 
 <h1>Installation Instructions</h1>
-<h3>Command Line</h3>
+<h3>Front End</h3>
+<h5>Command Line</h5>
 <ul>
   <li>In the terminal (was tested in WSL), navigate to the ./ProjectWorkspace/ directory and ensure that you have JDK 21 Installed.</li>
   <li>Use the gradle wrapper to build and run the project:</li>
@@ -17,7 +18,7 @@ JFreeChart - open source chart libray for creating bar charts and line charts
     <li>For Windows --> '.\gradlew.bat build' to build and '.\gradlew.bat run' to run</li>
   </ul>
 </ul>
-<h3>IDE</h3>
+<h5>IDE</h5>
 <ul>
   <li>Open the ./ProjectWorkspace/ directory with an IDE like IntelliJ.</li>
   <li>Use the IDE's built in run options or use the IDE's built in terminal following the command line instructions above to use the gradle wrapper.</li>
