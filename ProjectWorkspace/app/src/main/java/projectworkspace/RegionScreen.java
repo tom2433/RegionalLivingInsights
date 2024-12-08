@@ -17,6 +17,8 @@ import javax.swing.SwingConstants;
 /**
  * This class creates all components and handles all operations within the RegionScreen, where the
  * user selects 2 regions to compare.
+ *
+ * @author Thomas England
  */
 public class RegionScreen extends JPanel {
     private final App app;

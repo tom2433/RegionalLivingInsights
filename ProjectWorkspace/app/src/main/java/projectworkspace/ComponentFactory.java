@@ -22,8 +22,9 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 /**
- * This class creates specific components like JLabels, JButtons, JPanels, etc. It also creates
- * graphs with predicted data for a user-specified number of years and adds them to an actionPanel.
+ * This class creates specific components like JLabels, JButtons, JPanels, etc.
+ * It also creates graphs with predicted data for a user-specified number of
+ * years and adds them to an actionPanel.
  *
  * @author Thomas England
  */
@@ -38,7 +39,8 @@ public class ComponentFactory {
     /**
      * Constructs a ComponentFactory connected to a specified App
      *
-     * @param app an App object containing the App that this ComponentFactory belongs to.
+     * @param app an App object containing the App that this ComponentFactory
+     *            belongs to.
      */
     public ComponentFactory(App app) {
         this.app = app;
@@ -64,9 +66,11 @@ public class ComponentFactory {
     }
 
     /**
-     * Creates a 'Back to Main Menu' button that brings the user back to the main menu.
+     * Creates a 'Back to Main Menu' button that brings the user back to the
+     * main menu.
      *
-     * @return a JButton containing 'Back to Main Menu' that brings user back to main menu.
+     * @return a JButton containing 'Back to Main Menu' that brings user back to
+     *         main menu.
      */
     public JButton createBackButton() {
         JButton backButton = new JButton("Back to Main Menu");
@@ -77,8 +81,8 @@ public class ComponentFactory {
     }
 
     /**
-     * Creates a content panel for a screen (BorderLayout JPanel with podding of 20 px on each side from the
-     * edge of the window)
+     * Creates a content panel for a screen (BorderLayout JPanel with podding of
+     * 20 px on each side from the edge of the window)
      *
      * @return a BorderLayout JPanel with 20 px padding on all sides
      */
@@ -89,12 +93,12 @@ public class ComponentFactory {
     }
 
     /**
-     * Creates a button 'Calculate Predicted Data' that creates a line graph with future data using
-     * trendline for a user specified number of years.
+     * Creates a button 'Calculate Predicted Data' that creates a line graph
+     * with future data using trendline for a user specified number of years.
      *
-     * @param actionPanel the JPanel to add the button and graphs to
-     * @param lineChartPanel the ChartPanel containing the line chart to read data from to
-     *                       calculate trendline.
+     * @param actionPanel    the JPanel to add the button and graphs to
+     * @param lineChartPanel the ChartPanel containing the line chart to read
+     *                       data from to calculate trendline.
      */
     public void createCalcPredictedBtn(JPanel actionPanel, ChartPanel lineChartPanel) {
         // store actionPanel and lineChartPanel to edit/read from later
@@ -112,8 +116,9 @@ public class ComponentFactory {
     }
 
     /**
-     * Activates when calcPredictedBtn is clicked - Prompts user for how many years to predict
-     * trendline for and calls numYearsSelected() to create and add graph to actionPanel.
+     * Activates when calcPredictedBtn is clicked - Prompts user for how many
+     * years to predict trendline for and calls numYearsSelected() to create and
+     * add graph to actionPanel.
      */
     private void createPredictedDataDialog() {
         // create dialog to prompt user for years
@@ -150,13 +155,14 @@ public class ComponentFactory {
     }
 
     /**
-     * Activates when user has selected the number of years to predict the trendline for -
-     * retrieves all x and y values from old line graph, calculates the future coordinates for the
-     * user-specified number of years, creates full graph including past and future coordinates and
-     * adds graph to actionPanel.
+     * Activates when user has selected the number of years to predict the
+     * trendline for - retrieves all x and y values from old line graph,
+     * calculates the future coordinates for the user-specified number of years,
+     * creates full graph including past and future coordinates and adds graph
+     * to actionPanel.
      *
-     * @param numYearsBtn the JButton that the user clicked (contains num of years to predict data
-     *                    for)
+     * @param numYearsBtn the JButton that the user clicked (contains num of
+     *                    years to predict data for)
      */
     private void numYearsSelected(JButton numYearsBtn) {
         // retrieve num of years from numYearsBtn
@@ -182,7 +188,8 @@ public class ComponentFactory {
         // double to hold max y value out of all XYSeries (to calculate divider line)
         double globalMaxValue = 0;
 
-        // create new XYSeries with future data from trendline for each XYSeries in original
+        // create new XYSeries with future data from trendline for each XYSeries in
+        // original
         // dataset, add to XYSeriesCollection
         for (int seriesIndex = 0; seriesIndex < dataset.getSeriesCount(); seriesIndex++) {
             XYSeries originalSeries = dataset.getSeries(seriesIndex);
@@ -203,7 +210,8 @@ public class ComponentFactory {
             }
         }
 
-        // create divider to separate measured and calculated (y0 to yMax at x where calculated
+        // create divider to separate measured and calculated (y0 to yMax at x where
+        // calculated
         // data begins)
         XYSeries divider = new XYSeries("Divider");
         divider.add(2025, 0);
@@ -212,11 +220,10 @@ public class ComponentFactory {
 
         // create new line chart with calculated data
         JFreeChart newLineChart = ChartFactory.createXYLineChart(
-            "Median Home Values + " + numYears + (numYears == 1 ? " year" : " years"),
-            "Date (Year)",
-            "Median Home Value (USD)",
-            newDataset
-        );
+                "Median Home Values + " + numYears + (numYears == 1 ? " year" : " years"),
+                "Date (Year)",
+                "Median Home Value (USD)",
+                newDataset);
 
         // add new line chart to actionPanel
         ChartPanel newLineChartPanel = new ChartPanel(newLineChart);
@@ -228,8 +235,8 @@ public class ComponentFactory {
     }
 
     /**
-     * Retrieves the max Y value from an XYSeries for use in calculating divider for line graph
-     * with calculated data.
+     * Retrieves the max Y value from an XYSeries for use in calculating divider
+     * for line graph with calculated data.
      *
      * @param series the XYSeries to calculate max Y from
      * @return a double value containing the max Y from the specified XYSeries
@@ -248,8 +255,9 @@ public class ComponentFactory {
     }
 
     /**
-     * Calculates a trendline from the specified XYSeries and adds XY coordinates from the
-     * trendline starting at last x value and ending at the user-specified number of years.
+     * Calculates a trendline from the specified XYSeries and adds XY
+     * coordinates from the trendline starting at last x value and ending at the
+     * user-specified number of years.
      *
      * @param series the XYSeries containing data to read from and add to
      */
@@ -257,21 +265,22 @@ public class ComponentFactory {
         // n = number of coordinates
         int n = series.getItemCount();
 
-        // sum of all x vals, sum of all y, sum of product of all corresponding x and y, sum of
-        // squares of all x values
-        double sumX = 0,
-            sumY = 0,
-            sumXY = 0,
-            sumX2 = 0;
+        // sum of all x vals, sum of all y, sum of product of all corresponding x and y,
+        // sum of squares of all x values
+        double sumX   = 0,
+                sumY  = 0,
+                sumXY = 0,
+                sumX2 = 0;
         for (int i = 0; i < n; i++) {
-            sumX += (double) series.getX(i);
-            sumY += (double) series.getY(i);
+            sumX  += (double) series.getX(i);
+            sumY  += (double) series.getY(i);
             sumXY += (double) series.getX(i) * (double) series.getY(i);
             sumX2 += (double) series.getX(i) * (double) series.getX(i);
         }
 
         // calculate slope (the 'm' in y = mx + b)
-        double m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        double m = (n * sumXY - sumX * sumY) /
+                   (n * sumX2 - sumX * sumX);
         // calculate y-axis intercept (the 'b' in y = mx + b)
         double b = (sumY - m * sumX) / n;
 

@@ -16,9 +16,10 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 /**
- * This class creates and handles all operations and components within the CustomDataScreen. It
- * allows the user to create as many custom datasets as they want with as many areas in each
- * dataset as they want.
+ * This class creates and handles all operations and components within the
+ * CustomDataScreen. It allows the user to create as many custom datasets as
+ * they want with as many areas in each dataset as they want. Brings the user to
+ * the CustomDataVisScreen once the user is done making their datasets.
  *
  * @author Thomas England
  */
@@ -111,8 +112,8 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Creates a JButton "Add another dataset" which adds another empty custom dataset for the user
-     * to fill upon clicking.
+     * Creates a JButton "Add another dataset" which adds another empty custom
+     * dataset for the user to fill upon clicking.
      *
      * @return a JButton allowing user to add another custom dataset
      */
@@ -124,9 +125,9 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Creates the JButton "Compare Custom Datasets" which brings the user to the
-     * CustomDataVisScreen. It is only ever enabled  when the user has at least one area in each
-     * of their datasets.
+     * Creates the JButton "Compare Custom Datasets" which brings the user to
+     * the CustomDataVisScreen. It is only ever enabled when the user has at
+     * least one area in each of their datasets.
      */
     private void createNextBtn() {
         nextBtn = new JButton("Compare Custom Datasets -->");
@@ -137,11 +138,11 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Creates a JButton "add region to dataset" which prompts the user for a region to add to the
-     * given dataset and adds it.
+     * Creates a JButton "add region to dataset" which prompts the user for a
+     * region to add to the given dataset and adds it.
      *
-     * @param datasetNum an int containing the number of the dataset that this button will belong
-     *                   to
+     * @param datasetNum an int containing the number of the dataset that this
+     *                   button will belong to
      * @return a JButton allowing user to add a region to a given dataset
      */
     private JButton createAddRegionBtn(int datasetNum) {
@@ -152,11 +153,11 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Creates a JButton "add state to dataset" which prompts the user for a state to add to the
-     * given dataset and adds it.
+     * Creates a JButton "add state to dataset" which prompts the user for a
+     * state to add to the given dataset and adds it.
      *
-     * @param datasetNum an int containing the number of the dataset that this button will belong
-     *                   to
+     * @param datasetNum an int containing the number of the dataset that this
+     *                   button will belong to
      * @return a JButton allowing user to add a state to a given dataset
      */
     private JButton createAddStateBtn(int datasetNum) {
@@ -167,11 +168,12 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Called when an addRegionBtn is clicked. First prompts user for a state where the desired
-     * region is located, then prompts the user for the desired region in that state to add to the
-     * given dataset.
+     * Called when an addRegionBtn is clicked. First prompts user for a state
+     * where the desired region is located, then prompts the user for the
+     * desired region in that state to add to the given dataset.
      *
-     * @param datasetNum an int containing the number of the dataset to add the region to
+     * @param datasetNum an int containing the number of the dataset to add the
+     *                   region to
      */
     private void addRegion(int datasetNum) {
         // addToLabelPanel(datasetNum, "region");
@@ -214,11 +216,12 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Called when a state is selected from a dialog to add a region from the state to a specific
-     * dataset. Prompts user for a region to add from the selected state.
+     * Called when a state is selected from a dialog to add a region from the
+     * state to a specific dataset. Prompts user for a region to add from the
+     * selected state.
      *
-     * @param state a string containing the selected state with which to show regions from in the
-     *              dialog
+     * @param state      a string containing the selected state with which to show
+     *                   regions from in the dialog
      * @param datasetNum the specific number of the dataset to add a region to
      */
     private void selectRegion(String state, int datasetNum) {
@@ -259,15 +262,15 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Called when a region button from the 'select region to add' dialog prompt is clicked. Adds
-     * the user selected region to the given dataset only if there are no duplicates in any
-     * dataset.
+     * Called when a region button from the 'select region to add' dialog prompt
+     * is clicked. Adds the user selected region to the given dataset only if
+     * there are no duplicates in any dataset.
      *
-     * @param region String containing the user-selected region
-     * @param state String containing the user-selected region's state
-     * @param datasetNum int indicating the number of the given dataset to potentially add
-     *                   user-selected region to
-     * @param dialog JDialog that the selectRegionBtn belonged to
+     * @param region     String containing the user-selected region
+     * @param state      String containing the user-selected region's state
+     * @param datasetNum int indicating the number of the given dataset to
+     *                   potentially add user-selected region to
+     * @param dialog     JDialog that the selectRegionBtn belonged to
      */
     private void regionBtnClicked(String region, String state, int datasetNum, JDialog dialog) {
         // determine if region already in any datasets
@@ -282,7 +285,7 @@ public class CustomDataScreen extends JPanel {
         // if it does already exist, display warning and don't add
         if (regionInDataset) {
             duplicateStateRegionWarning();
-        // else (selected region isn't in any dataset)
+            // else (selected region isn't in any dataset)
         } else {
             // try to find dataset to add region to in datasets
             try {
@@ -321,9 +324,11 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Called when an addRegionBtn is clicked. Prompts the user for the desired state to add to the
-     * given dataset.
-     * @param datasetNum int indicating the number of the dataset to add the state to
+     * Called when an addRegionBtn is clicked. Prompts the user for the desired
+     * state to add to the given dataset.
+     *
+     * @param datasetNum int indicating the number of the dataset to add the
+     *                   state to
      */
     private void addState(int datasetNum) {
         // addToLabelPanel(datasetNum, "state");
@@ -363,13 +368,16 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Called when a stateBtn is clicked from the dialog prompt 'select state to add to set'.
-     * Adds the state to a given dataset only if the state does not exist in any datasets.
+     * Called when a stateBtn is clicked from the dialog prompt 'select state to
+     * add to set'. Adds the state to a given dataset only if the state does not
+     * exist in any datasets.
      *
-     * @param datasetNum int containing the number of the given dataset to potentially add the
-     *                   user-selected state to
-     * @param state String containing the user-selected state to potentially add to dataset
-     * @param dialog JDialog containing the stateBtn that was clicked
+     * @param datasetNum int containing the number of the given dataset to
+     *                   potentially add the user-selected state to
+     * @param state      String containing the user-selected state to potentially
+     *                   add
+     *                   to dataset
+     * @param dialog     JDialog containing the stateBtn that was clicked
      */
     private void stateBtnClicked(int datasetNum, String state, JDialog dialog) {
         // determine if state already in any datasets
@@ -384,7 +392,7 @@ public class CustomDataScreen extends JPanel {
         // if it is, display warning and don't add
         if (stateInDataset) {
             duplicateStateRegionWarning();
-        // if it isn't, add to dataset.
+            // if it isn't, add to dataset.
         } else {
             // if no dataset exists for the given dataset number, create one and add it
             try {
@@ -417,16 +425,17 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Called whenever a user selects a region or a state from a dialog to add to a given dataset,
-     * and conditions for adding have been satisfied. Adds a specified string as a JLabel to the
-     * labelPanel for a given dataset.
+     * Called whenever a user selects a region or a state from a dialog to add
+     * to a given dataset, and conditions for adding have been satisfied. Adds a
+     * specified string as a JLabel to the labelPanel for a given dataset.
      * <p>
-     * Precondition: data set with number corresponding to panelNum must have already been added to
-     * dataset.
+     * Precondition: data set with number corresponding to panelNum must have
+     * already been added to dataset.
      *
-     * @param panelNum int indicating the number of the given panel number to add to (corresponds
-     *                 to the number of the given dataset)
-     * @param text String containing the text to add to the panel with the given panel number
+     * @param panelNum int indicating the number of the given panel number to
+     *                 add to (corresponds to the number of the given dataset)
+     * @param text     String containing the text to add to the panel with the given
+     *                 panel number
      */
     private void addToLabelPanel(int panelNum, String text) {
         JLabel label = new JLabel(text);
@@ -439,8 +448,8 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Called from addDataset() whenever a dataset is added by the user. Creates a new labelPanel
-     * as a JPanel to display areas from a given dataset.
+     * Called from addDataset() whenever a dataset is added by the user. Creates
+     * a new labelPanel as a JPanel to display areas from a given dataset.
      *
      * @return JPanel with a vertical box layout
      */
@@ -451,8 +460,9 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Called from the Constructor whenever this screen is refreshed. Creates a 'Reset all inputs'
-     * button which refreshes this screen so all user input is reset.
+     * Called from the Constructor whenever this screen is refreshed. Creates a
+     * 'Reset all inputs' button which refreshes this screen so all user input
+     * is reset.
      *
      * @return a JButton 'Reset all inputs' which refreshes this screen
      */
@@ -464,9 +474,10 @@ public class CustomDataScreen extends JPanel {
     }
 
     /**
-     * Called whenever a user attempts to add a state or region to any given dataset when the state
-     * or region already exists in a dataset. Displays an error message to the user informing them
-     * that their selection has not been added.
+     * Called whenever a user attempts to add a state or region to any given
+     * dataset when the state or region already exists in a dataset. Displays an
+     * error message to the user informing them that their selection has not
+     * been added.
      */
     private void duplicateStateRegionWarning() {
         JOptionPane.showMessageDialog(

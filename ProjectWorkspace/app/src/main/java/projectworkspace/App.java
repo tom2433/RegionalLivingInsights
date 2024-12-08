@@ -10,10 +10,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- * This class holds the main JFrame of the application, and it contains a JPanel with a CardLayout
- * containing all Screens (classes extending JPanels). The main purpose of this class is to manage
- * the different screens (when to show what screen) , hold the main JFrame, and store an instance
- * of the DataReader class which retrieves data from the database to display in the DataVisScreens.
+ * This class holds the main JFrame of the application, and it contains a JPanel
+ * with a CardLayout containing all Screens (classes extending JPanels). The
+ * main purpose of this class is to manage the different screens (when to show
+ * what screen) , hold the main JFrame, and store an instance of the DataReader
+ * class which retrieves data from the database to display in the
+ * DataVisScreens.
  *
  * @author Thomas England
  */
@@ -24,8 +26,8 @@ public class App implements ActionListener {
     private final DataReader dataReader;
 
     /**
-     * Constructs an instance of App. Only one instance of App will exist throughout the entire
-     * execution of the program.
+     * Constructs an instance of App. Only one instance of App will exist
+     * throughout the entire execution of the program.
      */
     public App() {
         dataReader = new DataReader();
@@ -34,8 +36,8 @@ public class App implements ActionListener {
     }
 
     /**
-     * Creates all screens and adds them to the CardLayout of the mainPanel, and adds mainPanel to
-     * the frame (window). Also makes the window visible.
+     * Creates all screens and adds them to the CardLayout of the mainPanel, and
+     * adds mainPanel to the frame (window). Also makes the window visible.
      */
     private void windowManager() {
         // instantiate JFrame
@@ -58,9 +60,10 @@ public class App implements ActionListener {
     }
 
     /**
-     * Catches an ActionEvent when one occurs (a button is pressed). The only buttons with action
-     * listeners added to this class are buttons associated with changing screens and returning to
-     * the main menu. This method handles all of those operations.
+     * Catches an ActionEvent when one occurs (a button is pressed). The only
+     * buttons with action listeners added to this class are buttons associated
+     * with changing screens and returning to the main menu. This method handles
+     * all of those operations.
      *
      * @param e the event to be processed
      */
@@ -71,18 +74,22 @@ public class App implements ActionListener {
         // call method based on ActionEvent command (go to RegionScreen, StateScreen,
         // CustomDataScreen, and MainMenu)
         switch (action) {
-            case "Compare Regions" -> refreshRegionScreen();
-            case "Compare States" -> refreshStateScreen();
-            case "Compare Custom Datasets with Regions and/or States" -> refreshCustomDataScreen();
-            case "Back to Main Menu" -> refreshMainMenu();
+            case "Compare Regions" ->
+                refreshRegionScreen();
+            case "Compare States" ->
+                refreshStateScreen();
+            case "Compare Custom Datasets with Regions and/or States" ->
+                refreshCustomDataScreen();
+            case "Back to Main Menu" ->
+                refreshMainMenu();
         }
     }
 
     /**
      * Removes a screen from the mainPanel CardLayout.
      *
-     * @param constraintName a string containing the constraintName of the specific screen to
-     *                       remove
+     * @param constraintName a string containing the constraintName of the
+     *                       specific screen to remove
      */
     private void removeScreen(String constraintName) {
         for (Component comp : mainPanel.getComponents()) {
@@ -98,8 +105,8 @@ public class App implements ActionListener {
     }
 
     /**
-     * Refreshes the RegionScreen by removing it from the mainPanel CardLayout, re-creating it,
-     * adding it back to the CardLayout, and displaying it.
+     * Refreshes the RegionScreen by removing it from the mainPanel CardLayout,
+     * re-creating it, adding it back to the CardLayout, and displaying it.
      */
     public void refreshRegionScreen() {
         removeScreen("RegionScreen");
@@ -108,8 +115,8 @@ public class App implements ActionListener {
     }
 
     /**
-     * Refreshes the StateScreen by removing it from the mainPanel CardLayout, re-creating it,
-     * adding it back to the CardLayout, and displaying it.
+     * Refreshes the StateScreen by removing it from the mainPanel CardLayout,
+     * re-creating it, adding it back to the CardLayout, and displaying it.
      */
     public void refreshStateScreen() {
         removeScreen("StateScreen");
@@ -118,8 +125,9 @@ public class App implements ActionListener {
     }
 
     /**
-     * Refreshes the CustomDataScreen by removing it from the mainPanel CardLayout, re-creating it,
-     * adding it back to the CardLayout, and displaying it.
+     * Refreshes the CustomDataScreen by removing it from the mainPanel
+     * CardLayout, re-creating it, adding it back to the CardLayout, and
+     * displaying it.
      */
     public void refreshCustomDataScreen() {
         removeScreen("CustomDataScreen");
@@ -128,8 +136,8 @@ public class App implements ActionListener {
     }
 
     /**
-     * Refreshes the MainMenu by removing it from the mainPanel CardLayout, re-creating it,
-     * adding it back to the CardLayout, and displaying it.
+     * Refreshes the MainMenu by removing it from the mainPanel CardLayout,
+     * re-creating it, adding it back to the CardLayout, and displaying it.
      */
     private void refreshMainMenu() {
         removeScreen("MainMenu");
@@ -138,8 +146,9 @@ public class App implements ActionListener {
     }
 
     /**
-     * Refreshes the RegionDataVisScreen by removing it from the mainPanel CardLayout, re-creating
-     * it, adding it back to the CardLayout, and displaying it.
+     * Refreshes the RegionDataVisScreen by removing it from the mainPanel
+     * CardLayout, re-creating it, adding it back to the CardLayout, and
+     * displaying it.
      */
     public void refreshRegionDataVisScreen(String state1, String state2, String region1, String region2) {
         removeScreen("RegionDataVisScreen");
@@ -148,8 +157,9 @@ public class App implements ActionListener {
     }
 
     /**
-     * Refreshes the StateDataVisScreen by removing it from the mainPanel CardLayout, re-creating
-     * it, adding it back to the CardLayout, and displaying it.
+     * Refreshes the StateDataVisScreen by removing it from the mainPanel
+     * CardLayout, re-creating it, adding it back to the CardLayout, and
+     * displaying it.
      */
     public void refreshStateDataVisScreen(String state1, String state2) {
         removeScreen("StateDataVisScreen");
@@ -158,8 +168,9 @@ public class App implements ActionListener {
     }
 
     /**
-     * Refreshes the CustomDataVisScreen by removing it from the mainPanel CardLayout, re-creating it,
-     * adding it back to the CardLayout, and displaying it.
+     * Refreshes the CustomDataVisScreen by removing it from the mainPanel
+     * CardLayout, re-creating it, adding it back to the CardLayout, and
+     * displaying it.
      */
     public void refreshCustomDataVisScreen(ArrayList<ArrayList<String>> datasets) {
         removeScreen("CustomDataVisScreen");

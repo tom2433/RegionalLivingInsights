@@ -23,13 +23,15 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 /**
- * This class creates and handles all operations and components in the CustomDataVisScreen. It
- * allows the user to compare median home values from each of their custom datasets and view
- * predicted data based on a trendline for each dataset.
+ * This class creates and handles all operations and components in the
+ * CustomDataVisScreen. It allows the user to compare median home values from
+ * each of their custom datasets and view predicted data based on a trendline
+ * for each dataset.
  *
  * @author Thomas England
  */
 public class CustomDataVisScreen extends JPanel {
+
     private final App app;
     private ComponentFactory componentFactory;
     private ArrayList<ArrayList<String>> datasets;
@@ -39,8 +41,9 @@ public class CustomDataVisScreen extends JPanel {
     private JButton viewResultsBtn;
 
     /**
-     * 'Default' Constructor for the CustomDataVisScreen. Constructs a placeholder object of
-     * a CustomDataVisScreen to add to a cardPanelLayout for changing screens.
+     * 'Default' Constructor for the CustomDataVisScreen. Constructs a
+     * placeholder object of a CustomDataVisScreen to add to a cardPanelLayout
+     * for changing screens.
      *
      * @param app App object referencing the App that this screen belongs to
      */
@@ -49,12 +52,15 @@ public class CustomDataVisScreen extends JPanel {
     }
 
     /**
-     * Workhorse Constructor for the CustomDataVisScreen. Constructs a CustomDataVisScreen as a
-     * JPanel, adds all components and handles all operations within the screen.
+     * Workhorse Constructor for the CustomDataVisScreen. Constructs a
+     * CustomDataVisScreen as a JPanel, adds all components and handles all
+     * operations within the screen.
      *
-     * @param app App object referencing the App that this screen belongs to
-     * @param datasets An ArrayList of ArrayLists of Strings containing states or regions. Each
-     *                 ArrayList inside the parent ArrayList represents one dataset.
+     * @param app      App object referencing the App that this screen belongs to
+     * @param datasets An ArrayList of ArrayLists of Strings containing states
+     *                 or regions. Each ArrayList inside the parent ArrayList
+     *                 represents one
+     *                 dataset.
      */
     public CustomDataVisScreen(App app, ArrayList<ArrayList<String>> datasets) {
         // create as JPanel with BorderLayout
@@ -65,7 +71,7 @@ public class CustomDataVisScreen extends JPanel {
 
         // create labels and divider label
         JLabel descLabel = componentFactory.createDescLabel("Comparing all custom datasets");
-        JLabel descLabel2 =  componentFactory.createDescLabel("Begin by selecting the begin date to pull data from. The end date to stop pulling data is Oct2024.");
+        JLabel descLabel2 = componentFactory.createDescLabel("Begin by selecting the begin date to pull data from. The end date to stop pulling data is Oct2024.");
         JLabel descLabel3 = componentFactory.createDescLabel("If you make any accidental selections, click the button below to reset all inputs");
         JLabel dividerLabel = componentFactory.createDescLabel("------------------------------------");
 
@@ -77,7 +83,8 @@ public class CustomDataVisScreen extends JPanel {
         JButton resetBtn = createResetBtn();
         createBeginDateBtn();
 
-        // create actionPanel and add all components, including all areas from user-created
+        // create actionPanel and add all components, including all areas from
+        // user-created
         // datasets
         actionPanel = new JPanel();
         actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
@@ -118,8 +125,8 @@ public class CustomDataVisScreen extends JPanel {
     }
 
     /**
-     * Called from the workhorse constructor to create the beginDateBtn which allows the user to
-     * select a starting date for the data.
+     * Called from the workhorse constructor to create the beginDateBtn which
+     * allows the user to select a starting date for the data.
      */
     private void createBeginDateBtn() {
         beginDateBtn = new JButton("Select begin date");
@@ -128,8 +135,9 @@ public class CustomDataVisScreen extends JPanel {
     }
 
     /**
-     * Called when the user clicks on the beginDateBtn. Displays a dialog prompting the user to
-     * select a starting date for the data to be calculated.
+     * Called when the user clicks on the beginDateBtn. Displays a dialog
+     * prompting the user to select a starting date for the data to be
+     * calculated.
      */
     private void createBeginDateDialog() {
         String beginMonth = getBeginMonth();
@@ -175,10 +183,12 @@ public class CustomDataVisScreen extends JPanel {
     }
 
     /**
-     * Called when a user selects a begin month from the dialog prompt. Changes the beginDateBtn
-     * text, creates a 'view results' button and adds it to the actionPanel.
+     * Called when a user selects a begin month from the dialog prompt. Changes
+     * the beginDateBtn text, creates a 'view results' button and adds it to the
+     * actionPanel.
      *
-     * @param month String containing the user-selected begin month to start pulling data from
+     * @param month  String containing the user-selected begin month to start
+     *               pulling data from
      * @param dialog JDialog containing the monthBtn that was clicked
      */
     private void beginMonthSelected(String month, JDialog dialog) {
@@ -199,15 +209,17 @@ public class CustomDataVisScreen extends JPanel {
     }
 
     /**
-     * Called when the user has selected their desired start month with which to begin pulling data
-     * from. Creates a population bar chart containing population densities for all datasets
-     * compared to the average density of the US. Creates a line chart containing median home
-     * values for each dataset since the user-selected begin month, adds both charts to
-     * actionPanel. Uses ComponentFactory to create a 'calculate predicted results' btn which
-     * calculates a trendline for each dataset.
+     * Called when the user has selected their desired start month with which to
+     * begin pulling data from. Creates a population bar chart containing
+     * population densities for all datasets compared to the average density of
+     * the US. Creates a line chart containing median home values for each
+     * dataset since the user-selected begin month, adds both charts to
+     * actionPanel. Uses ComponentFactory to create a 'calculate predicted
+     * results' btn which calculates a trendline for each dataset.
      */
     private void viewResults() {
-        // disable viewResultsBtn to stop user from accidentally creating more of the same graphs
+        // disable viewResultsBtn to stop user from accidentally creating more of the
+        // same graphs
         viewResultsBtn.setEnabled(false);
 
         // create populationBarChart and add to actionPanel
@@ -228,14 +240,15 @@ public class CustomDataVisScreen extends JPanel {
         actionPanel.revalidate();
         actionPanel.repaint();
 
-        // use componentFactory to create calcPredictedBtn to create line chart with all measured
+        // use componentFactory to create calcPredictedBtn to create line chart with all
+        // measured
         // and predicted data based on trendline
         componentFactory.createCalcPredictedBtn(actionPanel, lineChartPanel);
     }
 
     /**
-     * Called by viewResults() when the user clicks the viewResultsBtn. Creates a line chart
-     * containing all median home value data from every dataset.
+     * Called by viewResults() when the user clicks the viewResultsBtn. Creates
+     * a line chart containing all median home value data from every dataset.
      *
      * @return JFreeChart containing an XYLineChart with median home value data
      */
@@ -243,13 +256,15 @@ public class CustomDataVisScreen extends JPanel {
         // create XYSeriesCollection to store all XYSeries
         XYSeriesCollection finalXYSeriesCollection = new XYSeriesCollection();
 
-        // add an XYSeries to XYSeriesCollection for each dataset in user-created datasets
+        // add an XYSeries to XYSeriesCollection for each dataset in user-created
+        // datasets
         for (ArrayList<String> dataset : datasets) {
             // map containing xy coordinates to add to XYSeries
             Map<Double, Double> datasetZhviData = app.getDataReader().getZhviDataFromSet(dataset, selectedBeginMonth);
             XYSeries datasetSeries = new XYSeries("Set " + (datasets.indexOf(dataset) + 1));
 
-            // add all coordinates from map to XYSeries and add XYSeries to XYSeriesCollection
+            // add all coordinates from map to XYSeries and add XYSeries to
+            // XYSeriesCollection
             for (Map.Entry<Double, Double> entry : datasetZhviData.entrySet()) {
                 datasetSeries.add(entry.getKey(), entry.getValue());
             }
@@ -258,19 +273,18 @@ public class CustomDataVisScreen extends JPanel {
 
         // create lineChart with XYSeriesCollection
         JFreeChart lineChart = ChartFactory.createXYLineChart(
-            "Median Home Values For " + datasets.size() + " Custom Datasets",
-            "Date (year)",
-            "Median Home Value (USD)",
-            finalXYSeriesCollection
-        );
+                "Median Home Values For " + datasets.size() + " Custom Datasets",
+                "Date (year)",
+                "Median Home Value (USD)",
+                finalXYSeriesCollection);
 
         return lineChart;
     }
 
     /**
-     * Called by viewResults() method when user clicks viewResultsBtn. Creates a population bar
-     * chart containing average population densities from each dataset compared to the average
-     * US state density.
+     * Called by viewResults() method when user clicks viewResultsBtn. Creates a
+     * population bar chart containing average population densities from each
+     * dataset compared to the average US state density.
      *
      * @return JFreeChart as a BarChart containing population density data
      */
@@ -305,10 +319,12 @@ public class CustomDataVisScreen extends JPanel {
     }
 
     /**
-     * Called by createBeginDateDialog() method when the user clicks the beginDateBtn. Retrieves the
-     * first available month (meaning the first column without null values) for the user-selected datasets.
+     * Called by createBeginDateDialog() method when the user clicks the
+     * beginDateBtn. Retrieves the first available month (meaning the first
+     * column without null values) for the user-selected datasets.
      *
-     * @return String containing the first available month for the user-created datasets
+     * @return String containing the first available month for the user-created
+     *         datasets
      */
     private String getBeginMonth() {
         // ArrayList to store begin months from each dataset
@@ -319,7 +335,7 @@ public class CustomDataVisScreen extends JPanel {
                 // if area is a state
                 if (area.length() <= 2) {
                     beginMonths.add(DataReader.getDoubleFromMonth(app.getDataReader().getBeginDateFromState(area)));
-                // else (area is a region)
+                    // else (area is a region)
                 } else {
                     String region = area.substring(0, area.indexOf(',')).trim();
                     String state = area.substring(area.indexOf(',') + 2).trim();
@@ -334,8 +350,8 @@ public class CustomDataVisScreen extends JPanel {
     }
 
     /**
-     * Called by the workhorse constructor to create a 'Reset all inputs' button which refreshes
-     * the screen so all user input is reset
+     * Called by the workhorse constructor to create a 'Reset all inputs' button
+     * which refreshes the screen so all user input is reset
      *
      * @return a JButton 'reset all inputs' which refreshes this screen
      */

@@ -29,7 +29,6 @@ public class DataReader {
      */
     @SuppressWarnings("CallToPrintStackTrace")
     public int getDensityFromSet(ArrayList<String> set) {
-        // int array list to store densities of each area in set
         // int to store average overall density to return
         int avgDensity = 0;
 
