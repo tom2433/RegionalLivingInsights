@@ -2,6 +2,16 @@
 
 An interactive application for comparing regional home values and population densities, visualizing trends, and forecasting future home values to help users make informed decisions about where to live.
 
+# File Locations Summarized
+
+- Documentation: '/RegionalLivingInsights/README.md'
+- ER diagram: '/RegionalLivingInsights/RegionalLivingInsights.dia'
+- Initial datasets (before normalization): '/RegionalLivingInsights/initial_data/'
+- Video Demonstration: '/RegionalLivingInsights/Project_Demonstration.mp4'
+- MySQL tables: '/RegionalLivingInsights/regions_database/tables/'
+- MySQL views: '/RegionalLivingInsights/regions_database/views/'
+- Source code files: 'RegionalLivingInsights/ProjectWorkspace/app/src/main/java/projectworkspace/'
+
 # References
 
 JFreeChart - open source chart libray for creating bar charts and line charts
@@ -59,14 +69,4 @@ ___
   - 1: 'Metro_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv': taken from [zillow](https://www.zillow.com/research/data).
   - 2: 'uscities.csv': taken from [kaggle](https://www.kaggle.com/datasets/sergejnuss/united-states-cities-database).
 - Used excel and java to combine these two datasets on RegionID found in the zillow dataset.
-
-# File Locations Summarized
-
-- Documentation: '/RegionalLivingInsights/README.md'
-- ER diagram: '/RegionalLivingInsights/RegionalLivingInsights.dia'
-- Initial datasets (before normalization): '/RegionalLivingInsights/initial_data/'
-- Video Demonstration: '/RegionalLivingInsights/Project_Demonstration.mp4'
-- MySQL tables: '/RegionalLivingInsights/regions_database/tables/'
-- MySQL views: '/RegionalLivingInsights/regions_database/views/'
-- Source code files: 'RegionalLivingInsights/ProjectWorkspace/app/src/main/java/projectworkspace/'
 ___
