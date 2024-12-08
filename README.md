@@ -40,6 +40,10 @@ Official Website: [https://www.jfree.org/jfreechart/](https://www.jfree.org/jfre
   - Compare population densities and median home vlaue histories of two or more custom datasets, which can each contain an unlimited number of regions and/or states.
 - There are three buttons on the Main Menu screen corresponding to each of these three features.
 - Each of the three features also includes a "Calculate Predicted Data" button which allows the user to create a line graph including past and future data (calculated using a trendline) for a user-specified number of years.
+- Other usage notes:
+  - User cannot select two of the same regions to compare in the RegionScreen.
+  - User cannot select two of the same states to compare in the StateScreen.
+  - User cannot have duplicate regions or states across or within custom datasets in the CustomDataScreen.
 - Notes about data processing within the application:
   - The region_zhvi_values table in the database has some null values for the earlier years for some regions. To combat this, the application finds the first available column with a non-null value for each region or state. When the user chooses the start date to begin pulling data, the first date they can choose will be the first available date with non-null values.
   - Some regions may have a null value in the middle of the data being pulled. If the program encounters a null value in the middle of pulling data, it replaces the null value with the last non-null value pulled from the table.
