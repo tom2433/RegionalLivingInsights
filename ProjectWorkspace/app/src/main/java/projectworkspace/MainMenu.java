@@ -10,9 +10,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+/**
+ * This class creates and handles all operations in the MainMenu screen. It allows the user to
+ * select a screen to go to to either compare regions, compare states, or compare custom datasets.
+ *
+ * @author Thomas England
+ */
 public class MainMenu extends JPanel {
     private final App app;
 
+    /**
+     * Constructs a MainMenu screen as a JPanel belonging to a specified App.
+     *
+     * @param app App object referencing the App that this JPanel belongs to.
+     */
     public MainMenu(App app) {
         super(new BorderLayout());
         this.app = app;
@@ -25,6 +36,11 @@ public class MainMenu extends JPanel {
         this.add(buttonPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * Creates a JLabel containing welcome text.
+     *
+     * @return a JLabel containing welcome text.
+     */
     private JLabel createDescLabel() {
         JLabel descLabel = new JLabel("Welcome to Regional Living Insights! Choose an option below to begin: ");
         descLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -32,6 +48,11 @@ public class MainMenu extends JPanel {
         return descLabel;
     }
 
+    /**
+     * Creates a JPanel containing buttons that bring the user to their respective screens.
+     *
+     * @return A JPanel containing buttons that bring the user to their respective screens.
+     */
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
