@@ -47,3 +47,12 @@ Official Website: [https://www.jfree.org/jfreechart/](https://www.jfree.org/jfre
   - 1: 'Metro_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv': taken from [zillow](https://www.zillow.com/research/data).
   - 2: 'uscities.csv': taken from [kaggle](https://www.kaggle.com/datasets/sergejnuss/united-states-cities-database).
 - Used excel and java to combine these two datasets on RegionID found in the zillow dataset.
+
+# File Locations Summarized
+- Documentation: '/RegionalLivingInsights/README.md'
+- ER diagram: '/RegionalLivingInsights/RegionalLivingInsights.dia'
+- Initial datasets (before normalization): '/RegionalLivingInsights/initial_data/'
+- Video Demonstration: '/RegionalLivingInsights/Project_Demonstration.mp4'
+- MySQL tables: '/RegionalLivingInsights/regions_database/tables/'
+- MySQL views: '/RegionalLivingInsights/regions_database/views/'
+- Source code files: 'RegionalLivingInsights/ProjectWorkspace/app/src/main/java/projectworkspace/'
