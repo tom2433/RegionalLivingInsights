@@ -45,7 +45,11 @@ public class CustomDataScreen extends JPanel {
         labelPanels = new ArrayList<>();
 
         // create components
-        JLabel descLabel = componentFactory.createDescLabel("This is the CustomDataScreen.");
+        JLabel descLabel = componentFactory.createDescLabel("This is the Custom Dataset Screen. Here, you create as many custom datasets as you want with");
+        JLabel descLabel2 = componentFactory.createDescLabel("as many different combinations of regions and states as you want. To begin, add states or");
+        JLabel descLabel3 = componentFactory.createDescLabel("regions to the first two datasets below. Note that you cannot have duplicate states or ");
+        JLabel descLabel4 = componentFactory.createDescLabel("regions across datasets or within datasets. If you make any accidental selections, click the");
+        JLabel descLabel5 = componentFactory.createDescLabel("'Reset all inputs' button below. To add another dataset, click the button directly below it.");
         JButton backBtn = componentFactory.createBackButton();
         JButton resetBtn = createResetBtn();
         JButton addDatasetBtn = createAddDatasetBtn();
@@ -54,6 +58,14 @@ public class CustomDataScreen extends JPanel {
         // add components to actionPanel
         actionPanel = new JPanel();
         actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
+        actionPanel.add(Box.createVerticalStrut(2));
+        actionPanel.add(descLabel2);
+        actionPanel.add(Box.createVerticalStrut(2));
+        actionPanel.add(descLabel3);
+        actionPanel.add(Box.createVerticalStrut(2));
+        actionPanel.add(descLabel4);
+        actionPanel.add(Box.createVerticalStrut(2));
+        actionPanel.add(descLabel5);
         actionPanel.add(Box.createVerticalStrut(2));
         actionPanel.add(resetBtn);
         actionPanel.add(Box.createVerticalStrut(2));
@@ -100,8 +112,20 @@ public class CustomDataScreen extends JPanel {
         actionPanel.add(labelPanel);
         actionPanel.add(Box.createVerticalStrut(20));
         actionPanel.add(addStateBtn);
-        actionPanel.add(Box.createVerticalStrut(10));
+        actionPanel.add(Box.createVerticalStrut(5));
         actionPanel.add(addRegionBtn);
+        if (datasetNum == 1) {
+            JButton add50StatesBtn = new JButton("Add all 50 states");
+            add50StatesBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+            add50StatesBtn.addActionListener(e -> {
+                String[] states = app.getDataReader().getStates();
+                for (String state : states) {
+                    stateBtnClicked(datasetNum, state, null);
+                }
+            });
+            actionPanel.add(Box.createVerticalStrut(5));
+            actionPanel.add(add50StatesBtn);
+        }
 
         // new dataset will be empty so disable next button
         nextBtn.setEnabled(false);
@@ -408,8 +432,10 @@ public class CustomDataScreen extends JPanel {
             addToLabelPanel(datasetNum, state);
         }
 
-        // close dialog
-        dialog.dispose();
+        if (dialog != null) {
+            // close dialog
+            dialog.dispose();
+        }
 
         // if all lists have at least one area in them, enable nextBtn
         boolean atLeastOneListEmpty = false;
