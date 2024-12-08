@@ -72,5 +72,5 @@ ___
   - Found all common regions (city & state) between the uscities csv and the csv containing zhvi values.
   - Removed regions from zhvi csv that did not have a corresponding region in the uscities csv.
   - Removed all regions from uscities csv that did not show up in the zhvi table.
-  - Used RegionID from the uscities csv as a primary key for regions table, replaced region and state columns from zhvi csv and uscities csv with their corresponding RegionID value as a foreign key to the regions table.
+  - Used RegionID from the zhvi csv as a primary key for regions table, replaced region and state columns from zhvi csv and uscities csv with their corresponding RegionID value as a foreign key to the regions table.
 ___
