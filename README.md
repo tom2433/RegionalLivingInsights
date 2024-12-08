@@ -69,4 +69,7 @@ ___
   - 1: 'Metro_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv': taken from [zillow](https://www.zillow.com/research/data).
   - 2: 'uscities.csv': taken from [kaggle](https://www.kaggle.com/datasets/sergejnuss/united-states-cities-database).
 - Used excel and java to combine these two datasets on RegionID found in the zillow dataset.
+  - Found all common regions (city & state) between the uscities csv and the csv containing zhvi values.
+  - Removed regions from zhvi csv that did not have a corresponding region in the uscities csv.
+  - Used RegionID from the uscities csv as a primary key for regions table, replaced region and state columns from zhvi csv and uscities csv with their corresponding RegionID value as a foreign key to the regions table.
 ___
