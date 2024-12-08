@@ -5,8 +5,11 @@ An interactive application for comparing regional home values and population den
 # References
 
 JFreeChart - open source chart libray for creating bar charts and line charts
+
 Version used: 1.5.5
+
 License: GNU Lesser General Public License
+
 Official Website: [https://www.jfree.org/jfreechart/](https://www.jfree.org/jfreechart/)
 
 # Installation Instructions
