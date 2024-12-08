@@ -20,6 +20,23 @@ public class DataReader {
     private ResultSet resultSet = null;
 
     /**
+     * Establishes a connection to the regions database on localhost server using DriverManager to
+     * allow usage of statement to execute queries.
+     *
+     * @throws SQLException in the event of an error in connecting to the database. This method
+     * must only be called from within a block with an SQLException handler.
+     */
+    private void establishConnection() throws SQLException {
+        String username = "root";
+        String password = "B@nd1t03";
+
+        connection = DriverManager.getConnection("jdbc:mysql://localhost/regions?" +
+                "user=" + username + "&password=" + password);
+
+        statement = connection.createStatement();
+    }
+
+    /**
      * Retrieves the average population density from a custom dataset containing both regions and
      * states.
      *
@@ -828,23 +845,6 @@ public class DataReader {
         } else {
             return region2StartMonth;
         }
-    }
-
-    /**
-     * Establishes a connection to the regions database on localhost server using DriverManager to
-     * allow usage of statement to execute queries.
-     *
-     * @throws SQLException in the event of an error in connecting to the database. This method
-     * must only be called from within a block with an SQLException handler.
-     */
-    private void establishConnection() throws SQLException {
-        String username = "root";
-        String password = "B@nd1t03";
-
-        connection = DriverManager.getConnection("jdbc:mysql://localhost/regions?" +
-                "user=" + username + "&password=" + password);
-
-        statement = connection.createStatement();
     }
 
     /**
