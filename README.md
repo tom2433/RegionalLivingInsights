@@ -36,14 +36,18 @@ Official Website: [https://www.jfree.org/jfreechart/](https://www.jfree.org/jfre
 
 - The 3 main features of the application are:
   - Compare population densities and median home value histories of two separate regions
+    - User cannot select two of the same regions to compare in the RegionScreen.
   - Compare population densities and median home value histories of two separate states
+    - User cannot select two of the same states to compare in the StateScreen.
   - Compare population densities and median home vlaue histories of two or more custom datasets, which can each contain an unlimited number of regions and/or states.
+    - User cannot have duplicate regions or states across or within custom datasets in the CustomDataScreen.
 - There are three buttons on the Main Menu screen corresponding to each of these three features.
+- Each of the three features has a corresponding dataVisScreen, which displays a population density bar chart.
+  - Contains 3 values (one for avg region/state density, one for one user-selected region/state, and one for the other), or 1 for each user-created custom dataset plus 1 for the average US state.
+- Each dataVisScreen has a line graph containing with X as the month (converted to a year) and Y as the median home value for that specific month.
+  - Contains 2 XYSeries or 'lines' (one for one region/state, one for the other), or one for each user-created custom dataset.
 - Each of the three features also includes a "Calculate Predicted Data" button which allows the user to create a line graph including past and future data (calculated using a trendline) for a user-specified number of years.
-- Other usage notes:
-  - User cannot select two of the same regions to compare in the RegionScreen.
-  - User cannot select two of the same states to compare in the StateScreen.
-  - User cannot have duplicate regions or states across or within custom datasets in the CustomDataScreen.
+  - This graph is a line graph which will contain two lines (one for one region/state, one for the other), or one line for each custom dataset created by the user.
 - Notes about data processing within the application:
   - The region_zhvi_values table in the database has some null values for the earlier years for some regions. To combat this, the application finds the first available column with a non-null value for each region or state. When the user chooses the start date to begin pulling data, the first date they can choose will be the first available date with non-null values.
   - Some regions may have a null value in the middle of the data being pulled. If the program encounters a null value in the middle of pulling data, it replaces the null value with the last non-null value pulled from the table.
