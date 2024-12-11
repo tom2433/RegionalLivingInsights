@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -43,6 +44,10 @@ public class App implements ActionListener {
         // instantiate JFrame
         frame = new JFrame("Regional Living Insights");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // set logo for JFrame
+        ImageIcon logoIcon = new ImageIcon("logo_drawing.png");
+        frame.setIconImage(logoIcon.getImage());
 
         // add all screens to mainPanel
         mainPanel.add(new MainMenu(this), "MainMenu");
