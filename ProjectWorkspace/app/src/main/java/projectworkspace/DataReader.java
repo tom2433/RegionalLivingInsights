@@ -28,7 +28,7 @@ public class DataReader {
      */
     private void establishConnection() throws SQLException {
         String username = "root";
-        String password = "B@nd1t03";
+        String password = "password";
 
         connection = DriverManager.getConnection("jdbc:mysql://localhost/regions?" +
                 "user=" + username + "&password=" + password);

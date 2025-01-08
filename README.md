@@ -1,4 +1,4 @@
-This README file contains all submission documentation for the final project including references, installation instructions, usage instructions, and all additional comments/instructions.
+This README file contains all submission documentation for the project including references, installation instructions, usage instructions, and all additional comments/instructions.
 <p>- Thomas England</p>
 
 # RegionalLivingInsights
@@ -12,7 +12,6 @@ Formatted version of this file available from the [github repository link](https
 - Documentation: '/RegionalLivingInsights/README.md'
 - ER diagram: '/RegionalLivingInsights/RegionalLivingInsights.dia'
 - Initial datasets (before normalization): '/RegionalLivingInsights/initial_data/'
-- Video Demonstration: '/RegionalLivingInsights/Project_Demonstration.mp4'
 - MySQL tables: '/RegionalLivingInsights/regions_database/tables/'
 - MySQL views: '/RegionalLivingInsights/regions_database/views/'
 - Source code files: 'RegionalLivingInsights/ProjectWorkspace/app/src/main/java/projectworkspace/'
