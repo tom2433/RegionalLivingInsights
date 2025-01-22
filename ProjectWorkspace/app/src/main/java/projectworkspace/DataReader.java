@@ -28,7 +28,7 @@ public class DataReader {
      */
     private void establishConnection() throws SQLException {
         String username = "root";
-        String password = "password";
+        String password = "B@nd1t03";
 
         connection = DriverManager.getConnection("jdbc:mysql://localhost/regions?" +
                 "user=" + username + "&password=" + password);
@@ -125,29 +125,6 @@ public class DataReader {
 
         // return population density value from given region
         return regionDensity;
-    }
-
-    /**
-     * Creates an array of Strings containing all months after and including the specified start
-     * month.
-     *
-     * @param startMonth String containing the starting month to begin the months array
-     * @return a String array containing all months after and including given startMonth
-     */
-    private String[] getMonthsArray(String startMonth) {
-        // retrieve number of remaining months including startMonth and create array with this size
-        int numMonths = getNumOfRemainingMonths(startMonth);
-        String[] months = new String[numMonths];
-
-        // fill months array with all available months after and including given startMonth
-        String currentMonth = startMonth;
-        for (int i = 0; i < numMonths; i++) {
-            months[i] = currentMonth;
-            currentMonth = getNextMonth(currentMonth);
-        }
-
-        // return fully built string array
-        return months;
     }
 
     /**
@@ -336,166 +313,6 @@ public class DataReader {
 
         // return HashMap with XY values
         return XYSeriesData;
-    }
-
-    /**
-     * Retrieves the number of remaining available months including the specified startMonth.
-     *
-     * @param startMonth String containing starting month to begin counting number of remaining
-     *                   months
-     * @return int indicating number of remaining months including given startMonth
-     */
-    private int getNumOfRemainingMonths(String startMonth) {
-        // retrieve year and month integer from startMonth
-        int startYear = Integer.parseInt(startMonth.substring(3));
-        int startMonthInt = getNumFromMonth(startMonth.substring(0, 3));
-        // calculate num of remaining years
-        int numRemainingYears = 2024 - startYear;
-        // calculate num of remaining months as num of remaining years times 12 plus num remaining
-        // months in this current year
-        return (numRemainingYears * 12) + (12 - startMonthInt - 1);
-    }
-
-    /**
-     * Retrieves the double value for an XY series from a specified month string. Ex: converts
-     * 'Jan2020' to 2020 + (1 / 12) or 2020.083333...
-     *
-     * @param month String containing the month to convert to a double value
-     * @return double containing the specified month converted to a double
-     */
-    public static double getDoubleFromMonth(String month) {
-        // retrieve year string and month int from month
-        String yearString = month.substring(3) + ".";
-        int monthNum = getNumFromMonth(month.substring(0, 3));
-        // return year + (month / 12)
-        return Double.parseDouble(yearString) + ((double) monthNum / 12.0);
-    }
-
-    /**
-     * Retrieves the month name from a double value (does the opposite of getDoubleFromMonth()).
-     * Ex: Returns 'Jan2020' if the double is 2020 + (1 / 12) or 2020.083333...
-     *
-     * @param month double containing the month value to convert to a string
-     * @return String containing the month as YYYYMMM format
-     */
-    public static String getMonthFromDouble(double month) {
-        // string to store month as a string
-        String monthString;
-
-        // retrieve year from month double as int
-        int yearInt = (int) (month);
-        // retrieve the decimal representing the month
-        double monthDouble = month - (double) yearInt;
-        // retrieve month int by multiplying it by 12 and rounding to nearest int
-        int monthInt = (int) Math.round(monthDouble * 12);
-        // add to month string the string equivalent of monthInt
-        monthString = getMonthFromNum(monthInt);
-
-        // add year to monthString and return
-        monthString += Integer.toString(yearInt);
-        return monthString;
-    }
-
-    /**
-     * Retrieves the month number (1 for Jan, 2 for Feb, etc) from the specified month String.
-     *
-     * @param month String containing the month to convert to int
-     * @return int containing the month number of the given month String
-     */
-    public static int getNumFromMonth(String month) {
-        return switch (month) {
-            case "Jan" -> 1;
-            case "Feb" -> 2;
-            case "Mar" -> 3;
-            case "Apr" -> 4;
-            case "May" -> 5;
-            case "Jun" -> 6;
-            case "Jul" -> 7;
-            case "Aug" -> 8;
-            case "Sep" -> 9;
-            case "Oct" -> 10;
-            case "Nov" -> 11;
-            case "Dec" -> 12;
-            default -> throw new IllegalArgumentException(
-                    "An error occurred when trying to convert " + month + " to a month value"
-            );
-        };
-    }
-
-    /**
-     * Retrieves the month String (Jan for 1, Feb for 2, etc) from the specified month number.
-     *
-     * @param num int containing the month number to convert to String
-     * @return String containing the month of the given month number
-     */
-    public static String getMonthFromNum(int num) {
-        return switch (num) {
-            case 1 -> "Jan";
-            case 2 -> "Feb";
-            case 3 -> "Mar";
-            case 4 -> "Apr";
-            case 5 -> "May";
-            case 6 -> "Jun";
-            case 7 -> "Jul";
-            case 8 -> "Aug";
-            case 9 -> "Sep";
-            case 10 -> "Oct";
-            case 11 -> "Nov";
-            case 12 -> "Dec";
-            default -> throw new IllegalArgumentException(
-                    "An error occurred when trying to convert the number " + num + " to a month."
-            );
-        };
-    }
-
-    /**
-     * Retrieves the next month in the sequence, given the specified currentMonth as a String.
-     *
-     * @param currentMonth String containing the current month
-     * @return String containing the next month in the sequence, after currentMonth
-     */
-    private String getNextMonth(String currentMonth) {
-        // retrieve year and month int from given currentMonth
-        int year = Integer.parseInt(currentMonth.substring(3));
-        int monthInt = getNumFromMonth(currentMonth.substring(0, 3));
-
-        // increment year if month is dec and change month to Jan, else just increment month
-        if (monthInt == 12) {
-            year++;
-            monthInt = 1;
-        } else {
-            monthInt++;
-        }
-
-        // return new month String
-        return (getMonthFromNum(monthInt) + Integer.toString(year));
-    }
-
-    /**
-     * Creates a string for a query that comes directly after the SELECT clause containing the
-     * AVG() of all months following and including the specified start month.
-     *
-     * @param startMonth String containing the starting month to begin the selection
-     * @return String containing the AVG() of all months following and including the given
-     * startMonth for use in a query
-     */
-    private String createSelectAllMonthsString(String startMonth) {
-        // retrieve num of remaining months including startMonth and create string to return
-        int numMonths = getNumOfRemainingMonths(startMonth);
-        StringBuilder selectAllMonthsString = new StringBuilder();
-
-        // build string by adding AVG(month) for each month after and including startMonth
-        String currentMonth = startMonth;
-        for (int i = 0; i < numMonths; i++) {
-            selectAllMonthsString.append("AVG(").append(currentMonth).append(") AS '").append(currentMonth).append("'");
-            if (i != numMonths - 1) {
-                selectAllMonthsString.append(", ");
-            }
-            currentMonth = getNextMonth(currentMonth);
-        }
-
-        // return full string
-        return selectAllMonthsString.toString();
     }
 
     /**
@@ -763,6 +580,7 @@ public class DataReader {
      * @param region String containing the region name to find the first available beginDate for
      * @return String containing the first available beginDate for the given state
      */
+    @SuppressWarnings("CallToPrintStackTrace")
     public String getBeginDateFromRegion(String state, String region) {
         // string startMonthString to return result
         String startMonthString = null;
@@ -867,4 +685,188 @@ public class DataReader {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Creates an array of Strings containing all months after and including the specified start
+     * month.
+     *
+     * @param startMonth String containing the starting month to begin the months array
+     * @return a String array containing all months after and including given startMonth
+     */
+    private String[] getMonthsArray(String startMonth) {
+        // retrieve number of remaining months including startMonth and create array with this size
+        int numMonths = getNumOfRemainingMonths(startMonth);
+        String[] months = new String[numMonths];
+
+        // fill months array with all available months after and including given startMonth
+        String currentMonth = startMonth;
+        for (int i = 0; i < numMonths; i++) {
+            months[i] = currentMonth;
+            currentMonth = getNextMonth(currentMonth);
+        }
+
+        // return fully built string array
+        return months;
+    }
+
+    /**
+     * Retrieves the number of remaining available months including the specified startMonth.
+     *
+     * @param startMonth String containing starting month to begin counting number of remaining
+     *                   months
+     * @return int indicating number of remaining months including given startMonth
+     */
+    private int getNumOfRemainingMonths(String startMonth) {
+        // retrieve year and month integer from startMonth
+        int startYear = Integer.parseInt(startMonth.substring(3));
+        int startMonthInt = getNumFromMonth(startMonth.substring(0, 3));
+        // calculate num of remaining years
+        int numRemainingYears = 2024 - startYear;
+        // calculate num of remaining months as num of remaining years times 12 plus num remaining
+        // months in this current year
+        return (numRemainingYears * 12) + (12 - startMonthInt - 1);
+    }
+
+    /**
+     * Retrieves the double value for an XY series from a specified month string. Ex: converts
+     * 'Jan2020' to 2020 + (1 / 12) or 2020.083333...
+     *
+     * @param month String containing the month to convert to a double value
+     * @return double containing the specified month converted to a double
+     */
+    public static double getDoubleFromMonth(String month) {
+        // retrieve year string and month int from month
+        String yearString = month.substring(3) + ".";
+        int monthNum = getNumFromMonth(month.substring(0, 3));
+        // return year + (month / 12)
+        return Double.parseDouble(yearString) + ((double) monthNum / 12.0);
+    }
+
+    /**
+     * Retrieves the month name from a double value (does the opposite of getDoubleFromMonth()).
+     * Ex: Returns 'Jan2020' if the double is 2020 + (1 / 12) or 2020.083333...
+     *
+     * @param month double containing the month value to convert to a string
+     * @return String containing the month as YYYYMMM format
+     */
+    public static String getMonthFromDouble(double month) {
+        // string to store month as a string
+        String monthString;
+
+        // retrieve year from month double as int
+        int yearInt = (int) (month);
+        // retrieve the decimal representing the month
+        double monthDouble = month - (double) yearInt;
+        // retrieve month int by multiplying it by 12 and rounding to nearest int
+        int monthInt = (int) Math.round(monthDouble * 12);
+        // add to month string the string equivalent of monthInt
+        monthString = getMonthFromNum(monthInt);
+
+        // add year to monthString and return
+        monthString += Integer.toString(yearInt);
+        return monthString;
+    }
+
+    /**
+     * Retrieves the month number (1 for Jan, 2 for Feb, etc) from the specified month String.
+     *
+     * @param month String containing the month to convert to int
+     * @return int containing the month number of the given month String
+     */
+    public static int getNumFromMonth(String month) {
+        return switch (month) {
+            case "Jan" -> 1;
+            case "Feb" -> 2;
+            case "Mar" -> 3;
+            case "Apr" -> 4;
+            case "May" -> 5;
+            case "Jun" -> 6;
+            case "Jul" -> 7;
+            case "Aug" -> 8;
+            case "Sep" -> 9;
+            case "Oct" -> 10;
+            case "Nov" -> 11;
+            case "Dec" -> 12;
+            default -> throw new IllegalArgumentException(
+                    "An error occurred when trying to convert " + month + " to a month value"
+            );
+        };
+    }
+
+    /**
+     * Retrieves the month String (Jan for 1, Feb for 2, etc) from the specified month number.
+     *
+     * @param num int containing the month number to convert to String
+     * @return String containing the month of the given month number
+     */
+    public static String getMonthFromNum(int num) {
+        return switch (num) {
+            case 1 -> "Jan";
+            case 2 -> "Feb";
+            case 3 -> "Mar";
+            case 4 -> "Apr";
+            case 5 -> "May";
+            case 6 -> "Jun";
+            case 7 -> "Jul";
+            case 8 -> "Aug";
+            case 9 -> "Sep";
+            case 10 -> "Oct";
+            case 11 -> "Nov";
+            case 12 -> "Dec";
+            default -> throw new IllegalArgumentException(
+                    "An error occurred when trying to convert the number " + num + " to a month."
+            );
+        };
+    }
+
+    /**
+     * Retrieves the next month in the sequence, given the specified currentMonth as a String.
+     *
+     * @param currentMonth String containing the current month
+     * @return String containing the next month in the sequence, after currentMonth
+     */
+    private String getNextMonth(String currentMonth) {
+        // retrieve year and month int from given currentMonth
+        int year = Integer.parseInt(currentMonth.substring(3));
+        int monthInt = getNumFromMonth(currentMonth.substring(0, 3));
+
+        // increment year if month is dec and change month to Jan, else just increment month
+        if (monthInt == 12) {
+            year++;
+            monthInt = 1;
+        } else {
+            monthInt++;
+        }
+
+        // return new month String
+        return (getMonthFromNum(monthInt) + Integer.toString(year));
+    }
+
+    /**
+     * Creates a string for a query that comes directly after the SELECT clause containing the
+     * AVG() of all months following and including the specified start month.
+     *
+     * @param startMonth String containing the starting month to begin the selection
+     * @return String containing the AVG() of all months following and including the given
+     * startMonth for use in a query
+     */
+    private String createSelectAllMonthsString(String startMonth) {
+        // retrieve num of remaining months including startMonth and create string to return
+        int numMonths = getNumOfRemainingMonths(startMonth);
+        StringBuilder selectAllMonthsString = new StringBuilder();
+
+        // build string by adding AVG(month) for each month after and including startMonth
+        String currentMonth = startMonth;
+        for (int i = 0; i < numMonths; i++) {
+            selectAllMonthsString.append("AVG(").append(currentMonth).append(") AS '").append(currentMonth).append("'");
+            if (i != numMonths - 1) {
+                selectAllMonthsString.append(", ");
+            }
+            currentMonth = getNextMonth(currentMonth);
+        }
+
+        // return full string
+        return selectAllMonthsString.toString();
+    }
+
 }
