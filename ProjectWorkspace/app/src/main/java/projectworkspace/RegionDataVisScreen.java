@@ -296,11 +296,11 @@ public class RegionDataVisScreen extends JPanel {
             "Average Density"
         );
         dataset.addValue(
-            app.getDataReader().getRegionDensity(region1, state1),
+            app.getDataReader().getDensityFromArea(region1 + ", " + state1),
             "Selected US Region",
             region1 + ", " + state1);
         dataset.addValue(
-            app.getDataReader().getRegionDensity(region2, state2),
+            app.getDataReader().getDensityFromArea(region2 + ", " + state2),
             "Selected US Region",
             region2 + ", " + state2
         );

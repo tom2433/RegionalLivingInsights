@@ -58,7 +58,7 @@ public class DataReader {
             "WHERE"
         );
 
-        // add to query to selected only the rows that are a part of the dataset
+        // add to query to select only the rows that are a part of the dataset
         for (String area : set) {
             if (area.length() == 2) {
                 query.append(" StateName = '").append(area).append("'");
@@ -93,39 +93,33 @@ public class DataReader {
     }
 
     /**
-     * Retrieves the population density from a specified region
+     * Retrieves the average state population density (if area is a state), or the region
+     * population density (if area is a region) for the specified area.
      *
-     * @param region String containing the name of the region to fetch the population density from
-     * @param state String containing the name of the state that the region belongs to
-     * @return double containing the population density per square kilometer for specified region
+     * @param area String containing the area as 'region, state' or 'state' with which to retrieve
+     *             population density value from
+     * @return double containing the avg population density for the specified area
      */
     @SuppressWarnings("CallToPrintStackTrace")
-    public double getRegionDensity(String region, String state) {
-        // double to store region population density to return
-        double regionDensity = 0.0;
+    public double getDensityFromArea(String area) {
+        double areaDensity = 0;
 
-        // attempt to retrieve population density value for given RegionName and StateName from
-        // database
         try {
-            resultSet = statement.executeQuery("""
-                    SELECT region_populations.PopulationDensity, regions.RegionName, regions.StateName
-                    FROM region_populations
-                    INNER JOIN regions
-                    ON region_populations.RegionID = regions.RegionID
-                    WHERE regions.StateName = '""" + state + "' && RegionName = '" + region + "';"
-            );
+            establishConnection();
 
+            resultSet = statement.executeQuery("CALL GetDensityFromArea('" + area + "');");
             resultSet.next();
-            regionDensity = (double) resultSet.getInt("PopulationDensity");
+
+            areaDensity = resultSet.getDouble("density");
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             close();
         }
 
-        // return population density value from given region
-        return regionDensity;
+        return areaDensity;
     }
+
 
     /**
      * Retrieves the ZHVI data for each month from a given set of both regions and states for a
@@ -367,37 +361,6 @@ public class DataReader {
         }
 
         return avgStateDensity;
-    }
-
-    /**
-     * Retrieves the average state population density for one specified state.
-     *
-     * @param state String containing the state initials with which to retrieve average population
-     *              density value from
-     * @return int containing the avg population density for the specified state
-     */
-    @SuppressWarnings("CallToPrintStackTrace")
-    public int getStateDensity(String state) {
-        int avgRegionDensity = 0;
-
-        try {
-            establishConnection();
-
-            resultSet = statement.executeQuery("""
-            SELECT AvgDensity
-            FROM statedensityview
-            WHERE StateName = '""" + state + "';");
-
-            resultSet.next();
-            double avgDensity = resultSet.getDouble("AvgDensity");
-            avgRegionDensity = (int) avgDensity;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            close();
-        }
-
-        return avgRegionDensity;
     }
 
     /**

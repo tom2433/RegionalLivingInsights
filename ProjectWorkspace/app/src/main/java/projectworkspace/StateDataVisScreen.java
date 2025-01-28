@@ -297,12 +297,12 @@ public class StateDataVisScreen extends JPanel {
             "Average Density"
         );
         dataset.addValue(
-            app.getDataReader().getStateDensity(state1),
+            app.getDataReader().getDensityFromArea(state1),
             "Selected US State",
             state1
         );
         dataset.addValue(
-            app.getDataReader().getStateDensity(state2),
+            app.getDataReader().getDensityFromArea(state2),
             "Selected US State",
             state2
         );
